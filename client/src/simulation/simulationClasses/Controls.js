@@ -1,6 +1,6 @@
 export default class Controls {
     constructor(simulation) {
-        this.simulation = simulation
+        this.simulation = simulation;
         this.simCtx = this.simulation.simCtx;
 
         // control variables
@@ -27,19 +27,21 @@ export default class Controls {
     }
 
     registerDrag() {
-        this.simCtx.canvas.addEventListener('mousedown', (e) => {
+        this.simCtx.canvas.addEventListener("mousedown", (e) => {
             this.mouseX = e.x;
             this.mouseY = e.y;
-            this.mouseIsDown = true
-        })
-        this.simCtx.canvas.addEventListener('mouseup', () => this.mouseIsDown = false)
-        window.addEventListener('mousemove', (e) => {
+            this.mouseIsDown = true;
+        });
+        this.simCtx.canvas.addEventListener(
+            "mouseup",
+            () => (this.mouseIsDown = false)
+        );
+        window.addEventListener("mousemove", (e) => {
             if (this.mouseIsDown) {
-                this.simulation.kaai.heightInM -= this.simCtx.pxToMeter(e.y - this.mouseY);
-                this.simCtx.moveOrigin(
-                    (e.x - this.mouseX),
-                    (e.y - this.mouseY),
-                )
+                this.simulation.kaai.heightInM -= this.simCtx.pxToMeter(
+                    e.y - this.mouseY
+                );
+                this.simCtx.moveOrigin(e.x - this.mouseX, e.y - this.mouseY);
                 this.mouseX = e.x;
                 this.mouseY = e.y;
             }
@@ -47,11 +49,17 @@ export default class Controls {
     }
 
     registerZoom() {
-        console.log('registering zoom')
-        this.simCtx.canvas.addEventListener('wheel', (e) => {
-            e.preventDefault();
-            this.simCtx.addToMeterToPxFactor(this.zoomRate * e.deltaY * -0.01);
-        }, false);
+        console.log("registering zoom");
+        this.simCtx.canvas.addEventListener(
+            "wheel",
+            (e) => {
+                e.preventDefault();
+                this.simCtx.addToMeterToPxFactor(
+                    this.zoomRate * e.deltaY * -0.01
+                );
+            },
+            false
+        );
     }
 
     /*
@@ -71,38 +79,44 @@ export default class Controls {
 
     registerTimeLine(timeLineId) {
         // const timeline = document.getElementById(timeLineId);
-        this.registerPlayPause('play-pause');
-        this.registerNext('next');
-        this.registerPrevious('previous');
-        this.registerTimepointInput('timepoint-input')
-        this.registerSpeedInput('speed-input');
-        
+        this.registerPlayPause("play-pause");
+        this.registerNext("next");
+        this.registerPrevious("previous");
+        this.registerTimepointInput("timepoint-input");
+        this.registerSpeedInput("speed-input");
+
         this.subscribeAnimationProgress((simInfo) => {
             // old time line
-            const timepoint = document.getElementById('current-timepoint');
-            timepoint.innerHTML = (simInfo.timePoint * this.simulation.timePointInterval).toFixed(1);
+            const timepoint = document.getElementById("current-timepoint");
+            timepoint.innerHTML = (
+                simInfo.timePoint * this.simulation.timePointInterval
+            ).toFixed(1);
 
-            const fps = document.getElementById('current-fps');
-            fps.style.color =(this.simCtx.fps - 3 > this.simulation.calculatedFPS || this.simCtx.fps + 3 < this.simulation.calculatedFPS) ? "red" : "black";
+            const fps = document.getElementById("current-fps");
+            fps.style.color =
+                this.simCtx.fps - 3 > this.simulation.calculatedFPS ||
+                this.simCtx.fps + 3 < this.simulation.calculatedFPS
+                    ? "red"
+                    : "black";
             fps.innerHTML = simInfo.calculatedFPS;
 
             // const timepointInput = document.getElementById('timepoint-input');
             // timepointInput.placeholder = `${simInfo.timePoint}`;
 
-            const speed = document.getElementById('current-speed');
+            const speed = document.getElementById("current-speed");
             speed.innerHTML = Math.round(simInfo.speed);
 
-            const progress = document.getElementById('timeline-progress');
-            progress.style.width = `${simInfo.timePointInPercentage*100}%`;
-        })
+            const progress = document.getElementById("timeline-progress");
+            progress.style.width = `${simInfo.timePointInPercentage * 100}%`;
+        });
 
-        document.getElementById('timeline-container').onclick = (e) => {
+        document.getElementById("timeline-container").onclick = (e) => {
             const xCoord = e.offsetX;
-            const fullWidth = document.getElementById('timeline-container').offsetWidth;
-            console.log(xCoord, fullWidth)
-            this.setAnimationProgressInPercentage(xCoord/fullWidth);
-        }
-        
+            const fullWidth = document.getElementById("timeline-container")
+                .offsetWidth;
+            console.log(xCoord, fullWidth);
+            this.setAnimationProgressInPercentage(xCoord / fullWidth);
+        };
     }
 
     registerPlayPause(buttonId) {
@@ -115,7 +129,7 @@ export default class Controls {
     registerNext(buttonId) {
         const bttn = document.getElementById(buttonId);
         bttn.onclick = () => {
-            console.log('dd');
+            console.log("dd");
             this.setNextFrame();
         };
     }
@@ -137,7 +151,7 @@ export default class Controls {
     registerSpeedInput(buttonId) {
         const el = document.getElementById(buttonId);
         el.onchange = (e) => {
-            if (e.target.value != '') this.setSpeed(Number(e.target.value));
+            if (e.target.value != "") this.setSpeed(Number(e.target.value));
         };
     }
 
@@ -156,7 +170,11 @@ export default class Controls {
         this.simulation.switchPlayPause();
     }
 
-    switchOutlineDisplay () {
+    setPause() {
+        this.simulation.pause();
+    }
+
+    switchOutlineDisplay() {
         this.simCtx.drawCaseShipOutline = !this.simCtx.drawCaseShipOutline;
     }
 
@@ -169,25 +187,34 @@ export default class Controls {
     }
 
     setAnimationProgressInPercentage(percentage) {
-        const simulationTimePointCount = this.simulation.timePointCount / this.simCtx.animationTimeInterval;
-        this.simulation.setNextAnimationTimeToSpecificTimepoint(Math.round(simulationTimePointCount*percentage) * this.simCtx.animationTimeInterval);
+        const simulationTimePointCount =
+            this.simulation.timePointCount / this.simCtx.animationTimeInterval;
+        this.simulation.setNextAnimationTimeToSpecificTimepoint(
+            Math.round(simulationTimePointCount * percentage) *
+                this.simCtx.animationTimeInterval
+        );
     }
 
     setAnimationProgress(timePoint) {
-        if (timePoint >= 0 && timePoint < this.simulation.timePointCount -1) this.simulation.setNextAnimationTimeToSpecificTimepoint(timePoint);
+        if (timePoint >= 0 && timePoint < this.simulation.timePointCount - 1)
+            this.simulation.setNextAnimationTimeToSpecificTimepoint(timePoint);
     }
 
     setSpeed(speed) {
         if (speed >= 1) {
-            const animationTimeInterval = speed/(this.simCtx.fps*this.simulation.timePointInterval);
-    
+            const animationTimeInterval =
+                speed / (this.simCtx.fps * this.simulation.timePointInterval);
+
             // if animationInterval < 1 => less than one timePoint per frame
-            if (animationTimeInterval < 1 ) {
-                this.simulation.setFPS(10)
+            if (animationTimeInterval < 1) {
+                this.simulation.setFPS(10);
                 this.simCtx.setAnimationTimeInterval(1);
             } else {
-                this.simulation.setFPS(this.simCtx.initFPS)
-                this.simCtx.setAnimationTimeInterval(speed/(this.simCtx.fps*this.simulation.timePointInterval));
+                this.simulation.setFPS(this.simCtx.initFPS);
+                this.simCtx.setAnimationTimeInterval(
+                    speed /
+                        (this.simCtx.fps * this.simulation.timePointInterval)
+                );
             }
         }
     }
@@ -203,5 +230,4 @@ export default class Controls {
     subscribeAnimationProgress(callback) {
         this.simulation.onAnimationTimeCallback.push(callback);
     }
-
 }
