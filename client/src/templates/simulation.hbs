@@ -1,26 +1,54 @@
 {{> header }}
-<div class="top-container" >
-    <a><p>{{routerLink "home" "terug"}}</p></a>
+<div class="top-container">
+    <a>
+        <p>{{routerLink "home" "terug"}}</p>
+    </a>
     <h3>Kind of ship - Size</h3>
     <p>Date: 21-11-2019</p>
 </div>
 
-<canvas id="simulation-canvas" width="1200" height="800"></canvas> 
+<canvas id="simulation-canvas" width="1200" height="800"></canvas>
 <div class="video-control-container">
     <div class="video-control">
         <div id="previous"><img src="../assets/icons/forward-solid.svg" style="transform: scaleX(-1);" /></div>
-        <div id="play-pause"><img src="../assets/icons/play-solid.svg"/></div>
+        <div id="play-pause"><img src="../assets/icons/play-solid.svg" /></div>
         <div id="next"><img src="../assets/icons/forward-solid.svg" /></div>
     </div>
     <div class="timeline-container" id="timeline-container">
-        <div class="timeline" id="timeline"><div id="timeline-progress"></div></div>
+        <div class="timeline" id="timeline">
+            <div id="timeline-progress"></div>
+        </div>
     </div>
     <div id="screenshot">
         <img src="../assets/icons/camera.svg" />
     </div>
     <div class="info">
-        <label class="fps">FPS: <span id="current-fps"></span> |</label> 
+        <label class="fps">FPS: <span id="current-fps"></span> |</label>
         <label>Time: <span id="current-timepoint">0</span>s</label>
+    </div>
+</div>
+<div class="sub-timeline-container">
+    <div class="sub-timeline-container-total">
+        <div class="sub-timeline-title-container">
+            <div class="sub-timeline-title">
+                <p>Hawsers</p>
+            </div>
+            <div class="sub-timeline-title">
+                <p>Fenders</p>
+            </div>
+        </div>
+        <div class="sub-timeline-timeline-container">
+            <div class="sub-timeline-container-content" id="timeline-container">
+                <div id="timeline-hawsers">
+                    <div id="timeline-progress"></div>
+                </div>
+            </div>
+            <div class="sub-timeline-container-content" id="timeline-container">
+                <div id="timeline-hawsers">
+                    <div id="timeline-progress"></div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 <div class="input-control-container">
@@ -30,7 +58,8 @@
             <label class="custom-upload">
                 <span id="metadata-input-bg"></span>
                 <p id="metadata-input-label">Bestand kiezen</p>
-                <input type="file" id="metadata-input" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"/>
+                <input type="file" id="metadata-input"
+                    accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" />
             </label>
         </div>
         <div>
@@ -74,4 +103,3 @@
 </div>
 
 {{> footer }}
-

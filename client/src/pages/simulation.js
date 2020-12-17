@@ -40,7 +40,9 @@ export default () => {
             });
         console.log(data.get())
         serverData = data.get();
-        
+        // addDataToMainTimeline(data);
+        // makeTimelinesVisibles();
+
         // SIMULATION
         simulation.addData(data);
         await simulation.init();
@@ -190,6 +192,63 @@ export default () => {
         // Handle data
         console.log(serverData);
     });
+
+
+
+
+
+
+
+    const timeline = document.getElementById('timeline');
+
+    const addDataToMainTimeline = async (data, controls) => {
+        const timelineData = data.get().events;
+        console.log(timelineData);
+        const canvasImage = document
+            .getElementById("simulation-canvas")
+            .toDataURL("image/png");
+
+        console.log("Onze data: " + JSON.stringify(timelineData));
+        let timelineHTML =
+            '<div class="point defaultpoints"><p>Start</p></div>';
+        timelineData.hawserBreaks.map((timelineDataItem) => {
+            timelineHTML += `
+            <div style="margin-left=${timelineDataItem.timePointInPercentage}" class="point">
+              <div class="point-info hidden">
+                <div class="image-container">
+                    <img class="canvas-image" src="${canvasImage}"/>
+                </div>
+                <p>Hawser ${timelineDataItem.id} has reached the max loadratio <br>at this timepoint: ${timelineDataItem.timePointIndex}</p>
+              </div>
+            </div>
+            `;
+        });
+        timelineHTML += '<div class="point defaultpoints"><p>Einde</p></div>';
+        timeline.innerHTML = timelineHTML;
+
+        const buttons = document.querySelectorAll(".canvas-image");
+        for (let i = 0; i < buttons.length; i++) {
+            buttons[i].addEventListener("click", () => {
+                controls.setAnimationProgress(timelineData.hawserBreaks[i].timePointIndex);
+                controls.setPause();
+                setTimeout(() => {
+                    const canvasScreenshot = document
+                        .getElementById("simulation-canvas")
+                        .toDataURL("image/png");
+                    buttons[i].src = canvasScreenshot;
+                }, 100);
+            });
+        }
+    };
+
+
+    const makeTimelinesVisibles = () => {
+        let HawsersTimeline = document.getElementById("timeline-hawsers");
+        let FendersTimeline = document.getElementById("timeline-fenders");
+
+        HawsersTimeline.style.display = "block";
+        FendersTimeline.style.display = "block";
+    }
 
 
 };
