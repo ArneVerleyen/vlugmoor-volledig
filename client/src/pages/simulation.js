@@ -40,7 +40,7 @@ export default () => {
             });
         console.log(data.get())
         serverData = data.get();
-        // addDataToMainTimeline(data);
+        addDataToMainTimeline(data);
         // makeTimelinesVisibles();
 
         // SIMULATION
@@ -199,31 +199,29 @@ export default () => {
 
 
 
-    const timeline = document.getElementById('timeline');
+    const timeline = document.getElementById('timeline-progress-hawsers');
 
     const addDataToMainTimeline = async (data, controls) => {
         const timelineData = data.get().events;
         console.log(timelineData);
-        const canvasImage = document
-            .getElementById("simulation-canvas")
-            .toDataURL("image/png");
 
         console.log("Onze data: " + JSON.stringify(timelineData));
-        let timelineHTML =
-            '<div class="point defaultpoints"><p>Start</p></div>';
+        let timelineHTML = "";
         timelineData.hawserBreaks.map((timelineDataItem) => {
-            timelineHTML += `
-            <div style="margin-left=${timelineDataItem.timePointInPercentage}" class="point">
-              <div class="point-info hidden">
-                <div class="image-container">
-                    <img class="canvas-image" src="${canvasImage}"/>
+            // if(timelineDataItem.id % 2) {
+                timelineHTML += `
+                <div style="left:${timelineDataItem.timePointInPercentage * 100}%" class="point">
                 </div>
-                <p>Hawser ${timelineDataItem.id} has reached the max loadratio <br>at this timepoint: ${timelineDataItem.timePointIndex}</p>
-              </div>
-            </div>
-            `;
+                `;
+
+            // } else {
+            //     timelineHTML += `
+            //     <div style="left:${timelineDataItem.timePointInPercentage * 100}%" class="point down">
+            //         <div class="line"></div>
+            //     </div>
+            //     `;
+            // }
         });
-        timelineHTML += '<div class="point defaultpoints"><p>Einde</p></div>';
         timeline.innerHTML = timelineHTML;
 
         const buttons = document.querySelectorAll(".canvas-image");
