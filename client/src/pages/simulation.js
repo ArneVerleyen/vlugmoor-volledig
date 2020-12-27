@@ -212,17 +212,16 @@ export default () => {
         console.log(serverData);
     });
 
-
-
-
-
-
-
-    const timeline = document.getElementById('timeline-progress-hawsers');
-    const addTimelinesHawsers = document.getElementById('sub-timeline-container-content-hawsers');
-    const addTimelinesFenders = document.getElementById('sub-timeline-container-content-fenders');
+    const timeline = document.getElementById("hawser-breakpoints");
+    const addTimelinesHawsers = document.getElementById(
+        "sub-timeline-container-content-hawsers"
+    );
+    const addTimelinesFenders = document.getElementById(
+        "sub-timeline-container-content-fenders"
+    );
     const addDataToMainTimeline = async (data, controls) => {
         const timelineData = data.get().events;
+
         const breakEvents = [
             ...timelineData.fenderBreaks,
             ...timelineData.hawserBreaks,
@@ -230,7 +229,8 @@ export default () => {
         console.log(breakEvents);
 
         let timelineHTML = "";
-        timelineData.hawserBreaks.map((timelineDataItem) => {
+        for (let i = 0; i < breakEvents.length; i++) {
+            if (i % 2 === 0) {
                 timelineHTML += `
                 <a href="#simulation-canvas" class="break-event-btn">
                     <div style="left:${
@@ -240,16 +240,25 @@ export default () => {
                     </div>
                 </a>
                 `;
-        });
+            } else {
+                timelineHTML += `
+                <a href="#simulation-canvas" class="break-event-btn">
+                    <div style="left:${
+                        breakEvents[i].timePointInPercentage * 100
+                    }%" class="point bottom">
+                        <div class="line"></div>
+                    </div>
+                </a>
+                `;
+            }
+        }
         timeline.innerHTML = timelineHTML;
 
-        let index = 0;
-
         let subtimelinelineHTML = "";
-        timelineData.hawserBreaks.map((timelinedataItem) => {
+        timelineData.hawserBreaks.map(() => {
             subtimelinelineHTML += `
                 <div class="sub-timeline-container-content" id="timeline-container">
-                    <div style="content:"${index++}"" id="timeline" class="timeline">
+                    <div id="timeline" class="timeline">
                     </div>
                 </div>
             `;
@@ -269,22 +278,22 @@ export default () => {
 
         addTimelinesFenders.innerHTML = addTimelinesFendersHTML;
 
-        const buttons = document.querySelectorAll(".canvas-image");
-        for (let i = 0; i < buttons.length; i++) {
-            buttons[i].addEventListener("click", () => {
-                controls.setAnimationProgress(timelineData.hawserBreaks[i].timePointIndex);
+        const breakEventButtons = document.querySelectorAll(".break-event-btn");
+        for (let i = 0; i < breakEventButtons.length; i++) {
+            breakEventButtons[i].addEventListener("click", () => {
+                controls.setAnimationProgress(breakEvents[i].timePointIndex);
                 controls.setPause();
             });
         }
     };
 
     let hawserButton = document.getElementById("open-hawsers");
-    hawserButton.addEventListener('click', () => {
+    hawserButton.addEventListener("click", () => {
         addTimelinesHawsers.classList.toggle("visible");
-    })
-    
+    });
+
     let fenderButton = document.getElementById("open-fenders");
-    fenderButton.addEventListener('click', () => {
+    fenderButton.addEventListener("click", () => {
         addTimelinesFenders.classList.toggle("visible");
-    })
+    });
 };
