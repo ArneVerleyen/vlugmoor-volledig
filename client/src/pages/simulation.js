@@ -200,7 +200,8 @@ export default () => {
 
 
     const timeline = document.getElementById('timeline-progress-hawsers');
-
+    const addTimelinesHawsers = document.getElementById('sub-timeline-container-content-hawsers');
+    const addTimelinesFenders = document.getElementById('sub-timeline-container-content-fenders');
     const addDataToMainTimeline = async (data, controls) => {
         const timelineData = data.get().events;
         console.log(timelineData);
@@ -208,21 +209,38 @@ export default () => {
         console.log("Onze data: " + JSON.stringify(timelineData));
         let timelineHTML = "";
         timelineData.hawserBreaks.map((timelineDataItem) => {
-            // if(timelineDataItem.id % 2) {
                 timelineHTML += `
                 <div style="left:${timelineDataItem.timePointInPercentage * 100}%" class="point">
                 </div>
                 `;
-
-            // } else {
-            //     timelineHTML += `
-            //     <div style="left:${timelineDataItem.timePointInPercentage * 100}%" class="point down">
-            //         <div class="line"></div>
-            //     </div>
-            //     `;
-            // }
         });
         timeline.innerHTML = timelineHTML;
+
+        let index = 0;
+
+        let subtimelinelineHTML = "";
+        timelineData.hawserBreaks.map((timelinedataItem) => {
+            subtimelinelineHTML += `
+                <div class="sub-timeline-container-content" id="timeline-container">
+                    <div style="content:"${index++}"" id="timeline" class="timeline">
+                    </div>
+                </div>
+            `;
+        });
+
+        addTimelinesHawsers.innerHTML = subtimelinelineHTML;
+
+        let addTimelinesFendersHTML = "";
+        timelineData.hawserBreaks.map(() => {
+            addTimelinesFendersHTML += `
+                <div class="sub-timeline-container-content" id="timeline-container">
+                    <div id="timeline" class="timeline">
+                    </div>
+                </div>
+            `;
+        });
+
+        addTimelinesFenders.innerHTML = addTimelinesFendersHTML;
 
         const buttons = document.querySelectorAll(".canvas-image");
         for (let i = 0; i < buttons.length; i++) {
@@ -239,14 +257,13 @@ export default () => {
         }
     };
 
-
-    const makeTimelinesVisibles = () => {
-        let HawsersTimeline = document.getElementById("timeline-hawsers");
-        let FendersTimeline = document.getElementById("timeline-fenders");
-
-        HawsersTimeline.style.display = "block";
-        FendersTimeline.style.display = "block";
-    }
-
-
+    let hawserButton = document.getElementById("open-hawsers");
+    hawserButton.addEventListener('click', () => {
+        addTimelinesHawsers.classList.toggle("visible");
+    })
+    
+    let fenderButton = document.getElementById("open-fenders");
+    fenderButton.addEventListener('click', () => {
+        addTimelinesFenders.classList.toggle("visible");
+    })
 };
