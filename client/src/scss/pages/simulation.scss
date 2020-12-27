@@ -24,6 +24,7 @@ html {
 body {
     background-image: url("../assets/images/background_img.svg");
     background-repeat: no-repeat;
+    overflow-x: hidden;
 }
 
 .top-container {
@@ -196,20 +197,18 @@ label {
             flex-direction: column;
             margin: 0 auto;
             .sub-timeline {
+                width: 1000px;
                 display: flex;
+                justify-content: space-between;
+                align-items: center;
                 margin-bottom: 40px;
                 .sub-timeline-title-container {
-                    justify-content: space-between;
-                    display: flex;
-                    flex-direction: column;
-                    width: fit-content;
-                    margin-right: 12px;
-                    text-align: right;
                     .sub-timeline-title {
-                        width: 70px;
+                        width: 100px;
                         p {
                             font-size: 14px;
                             font-family: "Roboto", sans-serif;
+                            text-align: right;
                             text-transform: uppercase;
                         }
                     }
@@ -288,19 +287,12 @@ label {
                     }
                 }
                 .sub-timeline-icon-container {
-                    display: flex;
-                    flex-direction: column;
-                    position: relative;
-                    padding-left: 3px;
-                    padding-top: 3px;
-                    margin-top: 9px;
-                    .sub-timeline-title {
+                    .sub-timeline-icon {
                         .chevron-icon {
                             height: 20px;
                             width: 20px;
-                            position: absolute;
+                            margin: 0 10px;
                             cursor: pointer;
-                            margin-top: -12px;
                         }
                     }
                 }

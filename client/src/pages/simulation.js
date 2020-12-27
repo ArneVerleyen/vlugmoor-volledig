@@ -46,8 +46,8 @@ export default () => {
         );
         console.log(data.get());
         serverData = data.get();
-        addDataToMainTimeline(data, controls);
-        // makeTimelinesVisibles();
+        addDataToHawsersTimeline(data, controls);
+        addDataToFendersTimeline(data, controls);
 
         // SIMULATION
         simulation.addData(data);
@@ -212,39 +212,30 @@ export default () => {
         console.log(serverData);
     });
 
-    const timeline = document.getElementById("hawser-breakpoints");
-    const addTimelinesHawsers = document.getElementById(
+    const hawsersTimeline = document.getElementById("hawser-breakpoints");
+    const addHawserTimelines = document.getElementById(
         "sub-timeline-container-content-hawsers"
     );
-    const addTimelinesFenders = document.getElementById(
-        "sub-timeline-container-content-fenders"
-    );
-    const addDataToMainTimeline = async (data, controls) => {
-        const timelineData = data.get().events;
+    const addDataToHawsersTimeline = async (data, controls) => {
+        const hawsersData = data.get().events.hawserBreaks;
 
-        const breakEvents = [
-            ...timelineData.fenderBreaks,
-            ...timelineData.hawserBreaks,
-        ];
-        console.log(breakEvents);
-
-        let timelineHTML = "";
-        for (let i = 0; i < breakEvents.length; i++) {
+        let hawsersHTML = "";
+        for (let i = 0; i < hawsersData.length; i++) {
             if (i % 2 === 0) {
-                timelineHTML += `
-                <a href="#simulation-canvas" class="break-event-btn">
+                hawsersHTML += `
+                <a href="#simulation-canvas" class="hawserbreak-btn">
                     <div style="left:${
-                        breakEvents[i].timePointInPercentage * 100
+                        hawsersData[i].timePointInPercentage * 100
                     }%" class="point top">
                         <div class="line"></div>
                     </div>
                 </a>
                 `;
             } else {
-                timelineHTML += `
-                <a href="#simulation-canvas" class="break-event-btn">
+                hawsersHTML += `
+                <a href="#simulation-canvas" class="hawserbreak-btn">
                     <div style="left:${
-                        breakEvents[i].timePointInPercentage * 100
+                        hawsersData[i].timePointInPercentage * 100
                     }%" class="point bottom">
                         <div class="line"></div>
                     </div>
@@ -252,36 +243,25 @@ export default () => {
                 `;
             }
         }
-        timeline.innerHTML = timelineHTML;
+        hawsersTimeline.innerHTML = hawsersHTML;
 
-        let subtimelinelineHTML = "";
-        timelineData.hawserBreaks.map(() => {
-            subtimelinelineHTML += `
+        let subtimelinesHTML = "";
+        hawsersData.map(() => {
+            subtimelinesHTML += `
                 <div class="sub-timeline-container-content" id="timeline-container">
                     <div id="timeline" class="timeline">
                     </div>
                 </div>
             `;
         });
+        if (hawsersHTML !== null) {
+            addHawserTimelines.innerHTML = subtimelinesHTML;
+        }
 
-        addTimelinesHawsers.innerHTML = subtimelinelineHTML;
-
-        let addTimelinesFendersHTML = "";
-        timelineData.hawserBreaks.map(() => {
-            addTimelinesFendersHTML += `
-                <div class="sub-timeline-container-content" id="timeline-container">
-                    <div id="timeline" class="timeline">
-                    </div>
-                </div>
-            `;
-        });
-
-        addTimelinesFenders.innerHTML = addTimelinesFendersHTML;
-
-        const breakEventButtons = document.querySelectorAll(".break-event-btn");
+        const breakEventButtons = document.querySelectorAll(".hawserbreak-btn");
         for (let i = 0; i < breakEventButtons.length; i++) {
             breakEventButtons[i].addEventListener("click", () => {
-                controls.setAnimationProgress(breakEvents[i].timePointIndex);
+                controls.setAnimationProgress(hawsersData[i].timePointIndex);
                 controls.setPause();
             });
         }
@@ -289,11 +269,66 @@ export default () => {
 
     let hawserButton = document.getElementById("open-hawsers");
     hawserButton.addEventListener("click", () => {
-        addTimelinesHawsers.classList.toggle("visible");
+        addHawserTimelines.classList.toggle("visible");
     });
+
+    const fendersTimeline = document.getElementById("fender-breakpoints");
+    const addFenderTimelines = document.getElementById(
+        "sub-timeline-container-content-fenders"
+    );
+    const addDataToFendersTimeline = async (data, controls) => {
+        const fendersData = data.get().events.fenderBreaks;
+
+        let fendersHTML = "";
+        for (let i = 0; i < fendersData.length; i++) {
+            if (i % 2 === 0) {
+                fendersHTML += `
+                <a href="#simulation-canvas" class="fenderbreak-btn">
+                    <div style="left:${
+                        fendersData[i].timePointInPercentage * 100
+                    }%" class="point top">
+                        <div class="line"></div>
+                    </div>
+                </a>
+                `;
+            } else {
+                fendersHTML += `
+                <a href="#simulation-canvas" class="fenderbreak-btn">
+                    <div style="left:${
+                        fendersData[i].timePointInPercentage * 100
+                    }%" class="point bottom">
+                        <div class="line"></div>
+                    </div>
+                </a>
+                `;
+            }
+        }
+        if (fendersHTML !== null) {
+            fendersTimeline.innerHTML = fendersHTML;
+        }
+
+        let subtimelinesHTML = "";
+        fendersData.map(() => {
+            subtimelinesHTML += `
+                <div class="sub-timeline-container-content" id="timeline-container">
+                    <div id="timeline" class="timeline">
+                    </div>
+                </div>
+            `;
+        });
+        addFenderTimelines.innerHTML = subtimelinesHTML;
+
+        const breakEventButtons = document.querySelectorAll(".fenderbreak-btn");
+        for (let i = 0; i < breakEventButtons.length; i++) {
+            breakEventButtons[i].addEventListener("click", () => {
+                controls.setAnimationProgress(fendersData[i].timePointIndex);
+                controls.setPause();
+            });
+        }
+    };
 
     let fenderButton = document.getElementById("open-fenders");
     fenderButton.addEventListener("click", () => {
-        addTimelinesFenders.classList.toggle("visible");
+        addFenderTimelines.classList.toggle("visible");
     });
 };
