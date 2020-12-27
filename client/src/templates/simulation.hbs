@@ -27,26 +27,60 @@
         <label>Time: <span id="current-timepoint">0</span>s</label>
     </div>
 </div>
-<div class="sub-timeline-container">
-    <div class="sub-timeline-container-total">
-        <div class="sub-timeline-title-container">
-            <div class="sub-timeline-title">
-                <p>Hawsers</p>
-            </div>
-            <div class="sub-timeline-title">
-                <p>Fenders</p>
-            </div>
-        </div>
-        <div class="sub-timeline-timeline-container">
-            <div class="timeline-progress" id="timeline-progress-all"></div>
-            <div class="sub-timeline-container-content" id="timeline-container">
-                <div id="timeline" class="timeline">
-                    <div id="timeline-progress-hawsers"></div>
+<div class="sub-timelines" id="sub-timelines">
+    <div class="sub-timeline-container">
+        <div class="sub-timeline-container-total">
+            <div class="sub-timeline">
+                <div class="sub-timeline-title-container">
+                    <div class="sub-timeline-title">
+                        <p>Hawsers</p>
+                    </div>
+                </div>
+                <div class="sub-timeline-timeline-container">
+
+                    <div class="timeline-progress" id="timeline-progress-hawsers"></div>
+                    <div class="sub-timeline-container-content" id="timeline-container">
+                        <div id="timeline" class="timeline hawsers">
+                        </div>
+                    </div>
+                    <div class="sub-timeline-container-content-hawsers" id="sub-timeline-container-content-hawsers">
+                        <!-- Imported from JavaScript simulation.js --->
+                    </div>
+                </div>
+                <div class="sub-timeline-icon-container">
+
+                    <div class="sub-timeline-title">
+                        <img id="open-hawsers" class="chevron-icon"
+                            src="../assets/icons/chevron-circle-down-solid.svg" />
+                    </div>
+
                 </div>
             </div>
-            <div class="sub-timeline-container-content" id="timeline-container">
-                <div id="timeline" class="timeline">
-                    <div id="timeline-progress-fenders"></div>
+            <div class="sub-timeline">
+                <div class="sub-timeline-title-container">
+                    <div class="sub-timeline-title">
+                        <p>Fenders</p>
+                    </div>
+                </div>
+                <div class="sub-timeline-timeline-container">
+
+                    <div class="timeline-progress" id="timeline-progress-fenders"></div>
+
+                    <div class="sub-timeline-container-content" id="timeline-container">
+                        <div id="timeline" class="timeline fenders">
+                        </div>
+                    </div>
+                    <div class="sub-timeline-container-content-fenders" id="sub-timeline-container-content-fenders">
+                        <!-- Imported from JavaScript simulation.js --->
+                    </div>
+                </div>
+                <div class="sub-timeline-icon-container">
+
+                    <div class="sub-timeline-title">
+                        <img id="open-fenders" class="chevron-icon"
+                            src="../assets/icons/chevron-circle-down-solid.svg" />
+                    </div>
+
                 </div>
             </div>
         </div>

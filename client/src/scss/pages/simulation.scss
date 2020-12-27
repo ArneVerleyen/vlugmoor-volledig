@@ -185,79 +185,119 @@ label {
         width: 100%;
     }
 }
-.sub-timeline-container {
-    height: 120px;
-    display: flex;
-    margin: 0 auto 40px;
-    width: 100vw;
-    .sub-timeline-container-total {
+.sub-timelines {
+    // display: none;
+    .sub-timeline-container {
+        height: 100%;
         display: flex;
-        margin: 0 auto;
-        .sub-timeline-timeline-container {
-            justify-content: space-between;
+        margin: 0 auto 40px;
+        width: 100vw;
+        .sub-timeline-container-total {
             display: flex;
             flex-direction: column;
-            height: 120px;
-            position: relative;
-            #timeline-progress-all {
-                background-color: #ff664f;
-                height: calc(100% + 20px);
-                width: 2px;
-                position: absolute;
-                left: 0;
-                top: -10px;
+            margin: 0 auto;
+            .sub-timeline {
+                display: flex;
+                margin-bottom: 40px;
             }
-        }
-        .sub-timeline-title-container {
-            justify-content: space-between;
-            align-content: space-between;
-            align-self: center;
-            align-items: center;
-            display: flex;
-            flex-direction: column;
-            height: 120px;
-            width: fit-content;
-            margin-right: 12px;
-            .sub-timeline-title {
-                width: 70px;
-                p {
-                    font-size: 14px;
-                    font-family: "Roboto", sans-serif;
-                    text-transform: uppercase;
+            .sub-timeline-timeline-container {
+                justify-content: space-between;
+                display: flex;
+                flex-direction: column;
+                position: relative;
+                #timeline-progress-fenders, #timeline-progress-hawsers {
+                    background-color: #ff664f;
+                    height: calc(100% + 20px);
+                    width: 2px;
+                    position: absolute;
+                    left: 0;
+                    top: -10px;
                 }
-            }
-        }
-        .sub-timeline-container-content {
-            width: fit-content;
-            height: 5px;
-            margin: 7px auto;
-            display: flex;
-            flex-direction: row;
-            width: 800px;
-            cursor: pointer;
-            .timeline {
-                width: 100%;
-                height: 100%;
-                background-color: #d1d1d1;
-                #timeline-progress-hawsers {
-                    .point {
-                        position: absolute;
-                        border-radius: 15px;
-                        width: 10px;
-                        height: 10px;
-                        background: #d1d1d1;
-                        border: 1px solid #ff664f;
-                        top: 3px;
-                        // &.up {
-                        //     margin-top: -20px;
-                        // }
-                        // &.down {
-                        //     margin-top: 20px;
-                        // }
+                .sub-timeline-container-content-hawsers {
+                    display: none;
+                    &.visible {
+                        display: block;
+                    }
+                }
+                .sub-timeline-container-content-fenders {
+                    display: none;
+                    &.visible {
+                        display: block;
                     }
                 }
             }
-        }
+            .sub-timeline-title-container {
+                justify-content: space-between;
+                display: flex;
+                flex-direction: column;
+                width: fit-content;
+                margin-right: 12px;
+                text-align: right;
+                #sub-timeline-titles {
+                    display: none;
+                    &.visible {
+                        display: block;
+                    }
+                }
+                .sub-timeline-title {
+                    width: 70px;
+                    p {
+                        font-size: 14px;
+                        font-family: "Roboto",sans-serif;
+                        text-transform: uppercase;
+                    }
+                    
+                }
+            }
+            .sub-timeline-icon-container {
+                display: flex;
+                flex-direction: column;
+                position: relative;
+                padding-left: 3px;
+                padding-top: 3px;
+                margin-top: 9px;
+                .sub-timeline-title {
+                    .chevron-icon {
+                        width: 15px;
+                        position: absolute;
+                        cursor: pointer;
+                        height: 15px;
+                        margin-top: -11px;
+                    }
+                }
+            }
+            .sub-timeline-container-content {
+                height: 5px;
+                margin: 7px auto;
+                display: flex;
+                flex-direction: row;
+                width: 800px;
+                cursor: pointer;
+                margin-bottom: 11px;
+                .timeline {
+                    flex-grow: 0;
+                    width: 100%;
+                    height: 100%;
+                    background-color: #d1d1d1;
+                    #timeline-progress-hawsers {
+                        .point {
+                            position: absolute;
+                            border-radius: 15px;
+                            width: 20px;
+                            height: 20px;
+                            background: #ff664f;
+                            top: 3px;
+                            // &.up {
+                            //     margin-top: -20px;
+                            // }
+                            // &.down {
+                            //     margin-top: 20px;
+                            // }
+                        }
+                    }
+                }
+            }
+        }    
     }
 }
 
