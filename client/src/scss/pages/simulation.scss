@@ -186,6 +186,7 @@ label {
         width: 100%;
     }
 }
+
 .sub-timelines {
     .sub-timeline-container {
         height: 100%;
@@ -212,15 +213,17 @@ label {
                             text-transform: uppercase;
                         }
                     }
-                    .sub-timeline-titles-fenders,
-                    .sub-timeline-titles-hawsers {
-                        display: none;
-                        margin-top: 40px;
-                        &.visible {
-                            display: block;
-                        }
-                        p {
-                            margin: 10px 0px;
+                    .sub-timeline-titles {
+                        &-hawsers,
+                        &-fenders {
+                            display: none;
+                            margin-top: 40px;
+                            &.visible {
+                                display: block;
+                            }
+                            p {
+                                margin: 10px 0;
+                            }
                         }
                     }
                 }
@@ -238,15 +241,14 @@ label {
                         position: absolute;
                         left: 0;
                         top: -10px;
+                        z-index: 1;
                     }
                     .sub-timeline-container-content {
                         height: 5px;
-                        margin: 8px 0px;
-                        display: flex;
-                        flex-direction: row;
+                        margin: 10px 0;
                         width: 800px;
                         .timeline {
-                            flex-grow: 0;
+                            position: relative;
                             width: 100%;
                             height: 100%;
                             background-color: #d1d1d1;
@@ -260,9 +262,10 @@ label {
                                 height: 20px;
                                 background: #ff664f;
                                 margin-left: -10px;
-                                top: 3px;
+                                top: -10px;
+                                z-index: 2;
                                 &.top {
-                                    top: -20px;
+                                    top: -28px;
                                     .line {
                                         width: 1px;
                                         height: 12px;
@@ -271,7 +274,7 @@ label {
                                     }
                                 }
                                 &.bottom {
-                                    top: 20px;
+                                    top: 12px;
                                     .line {
                                         width: 1px;
                                         height: 12px;
@@ -286,7 +289,7 @@ label {
                             display: none;
                             margin-top: 20px;
                             .sub-timeline-container-content {
-                                margin: 20px 0px;                                
+                                margin: 20px 0px;
                             }
                             &.visible {
                                 display: block;

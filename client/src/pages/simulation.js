@@ -1,3 +1,4 @@
+import { data } from "jquery";
 import App from "../lib/App";
 import { Data, MetaData } from "../simulation/dataClasses";
 import { Simulation } from "../simulation/simulationClasses";
@@ -216,12 +217,12 @@ export default () => {
     const addHawserTimelines = document.getElementById(
         "sub-timeline-container-content-hawsers"
     );
-
-    const titleDivHawsers = document.getElementById("sub-timeline-titles-hawsers");
+    const titleDivHawsers = document.getElementById(
+        "sub-timeline-titles-hawsers"
+    );
 
     const addDataToHawsersTimeline = async (data, controls) => {
         const hawsersData = data.get().events.hawserBreaks;
-
         const sortedHawsersData = hawsersData.sort((a, b) => a.id - b.id);
 
         let hawsersHTML = "";
@@ -254,8 +255,7 @@ export default () => {
         sortedHawsersData.map((dataItem) => {
             subtimelinesHTML += `
                 <div class="sub-timeline-container-content" id="timeline-container">
-                    <div id="timeline" class="timeline" dataindex=${dataItem.id} >
-                    </div>
+                    <div id="timeline" class="timeline" data-type="hawser" data-id="${dataItem.id}"></div>
                 </div>
             `;
         });
@@ -266,13 +266,15 @@ export default () => {
         const breakEventButtons = document.querySelectorAll(".hawserbreak-btn");
         for (let i = 0; i < breakEventButtons.length; i++) {
             breakEventButtons[i].addEventListener("click", () => {
-                controls.setAnimationProgress(sortedHawsersData[i].timePointIndex);
+                controls.setAnimationProgress(
+                    sortedHawsersData[i].timePointIndex
+                );
                 controls.setPause();
             });
         }
 
         addTitles(sortedHawsersData, titleDivHawsers);
-        //addBreakpointsToSubtimelines(sortedHawsersData);
+        addBreakpointsToSubtimelines(sortedHawsersData, "hawser", controls);
     };
 
     let hawserButton = document.getElementById("open-hawsers");
@@ -285,12 +287,12 @@ export default () => {
     const addFenderTimelines = document.getElementById(
         "sub-timeline-container-content-fenders"
     );
-
-    const titleDivFenders = document.getElementById("sub-timeline-titles-fenders");
+    const titleDivFenders = document.getElementById(
+        "sub-timeline-titles-fenders"
+    );
 
     const addDataToFendersTimeline = async (data, controls) => {
         const fendersData = data.get().events.fenderBreaks;
-
         const sortedFendersData = fendersData.sort((a, b) => a.id - b.id);
 
         let fendersHTML = "";
@@ -325,8 +327,7 @@ export default () => {
         sortedFendersData.map((dataItem) => {
             subtimelinesHTML += `
                 <div class="sub-timeline-container-content" id="timeline-container">
-                    <div id="timeline" class="timeline" dataindex=${dataItem.id} >
-                    </div>
+                    <div id="timeline" class="timeline" data-type="fender" data-id="${dataItem.id}"></div>
                 </div>
             `;
         });
@@ -335,48 +336,70 @@ export default () => {
         const breakEventButtons = document.querySelectorAll(".fenderbreak-btn");
         for (let i = 0; i < breakEventButtons.length; i++) {
             breakEventButtons[i].addEventListener("click", () => {
-                controls.setAnimationProgress(sortedFendersData[i].timePointIndex);
+                controls.setAnimationProgress(
+                    sortedFendersData[i].timePointIndex
+                );
                 controls.setPause();
             });
         }
 
         addTitles(sortedFendersData, titleDivFenders);
-
+        addBreakpointsToSubtimelines(sortedFendersData, "fender", controls);
     };
-
-    // const addBreakpointsToSubtimelines = (data) => {
-    //     const timeline = document.getElementById("timeline");
-    //     let subtimelineHTML = "";
-    //     data.map((dataItem) => {
-    //         let test = timeline.getAttribute("dataindex");
-    //         console.log(test);
-    //         subtimelineHTML += `
-    //             <div class="point">
-    //                 ${dataItem.id}
-    //             </div>
-    //         `
-        
-    //         test.innerHTML = subtimelineHTML;
-    //     });
-    // }
-
-    const addTitles = (data, container) => {
-
-        let subtimelinesTitles = "";
-        data.map((dataItem) => {
-            subtimelinesTitles += `
-                <div class="sub-timeline-title">
-                    <p>ID: ${dataItem.id}</p>
-                </div>
-              `
-              ;
-          });
-          container.innerHTML += subtimelinesTitles;
-      }
 
     let fenderButton = document.getElementById("open-fenders");
     fenderButton.addEventListener("click", () => {
         addFenderTimelines.classList.toggle("visible");
         titleDivFenders.classList.toggle("visible");
     });
+
+    const addTitles = (data, container) => {
+        let subtimelinesTitles = "";
+        data.map((dataItem) => {
+            subtimelinesTitles += `
+              <div class="sub-timeline-title">
+                  <p>ID: ${dataItem.id}</p>
+              </div>
+            `;
+        });
+        container.innerHTML += subtimelinesTitles;
+    };
+
+    const addBreakpointsToSubtimelines = (data, type, controls) => {
+        let allTimelines = document.querySelectorAll(".timeline");
+        allTimelines = [...allTimelines];
+        let currentTimeline = null;
+        data.map((dataItem) => {
+            currentTimeline = allTimelines.find((timeline) => {
+                return (
+                    timeline.dataset.type === type &&
+                    timeline.dataset.id === dataItem.id.toString()
+                );
+            });
+
+            let subtimelineHTML = `
+            <a href="#simulation-canvas" class="${type}break-btn">
+                <div style="left:${
+                    dataItem.timePointInPercentage * 100
+                }%" class="point">
+                    ${dataItem.id}
+                </div>
+            </a>
+            `;
+
+            currentTimeline.innerHTML = subtimelineHTML;
+        });
+
+        const breakEventButtons = document.querySelectorAll(
+            `.${type}break-btn`
+        );
+        for (let i = 0; i < breakEventButtons.length; i++) {
+            breakEventButtons[i].addEventListener("click", () => {
+                controls.setAnimationProgress(
+                    data[i < data.length ? i : i - data.length].timePointIndex
+                );
+                controls.setPause();
+            });
+        }
+    };
 };
