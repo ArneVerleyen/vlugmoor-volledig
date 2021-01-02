@@ -216,16 +216,21 @@ export default () => {
     const addHawserTimelines = document.getElementById(
         "sub-timeline-container-content-hawsers"
     );
+
+    const titleDivHawsers = document.getElementById("sub-timeline-titles-hawsers");
+
     const addDataToHawsersTimeline = async (data, controls) => {
         const hawsersData = data.get().events.hawserBreaks;
 
+        const sortedHawsersData = hawsersData.sort((a, b) => a.id - b.id);
+
         let hawsersHTML = "";
-        for (let i = 0; i < hawsersData.length; i++) {
+        for (let i = 0; i < sortedHawsersData.length; i++) {
             if (i % 2 === 0) {
                 hawsersHTML += `
                 <a href="#simulation-canvas" class="hawserbreak-btn">
                     <div style="left:${
-                        hawsersData[i].timePointInPercentage * 100
+                        sortedHawsersData[i].timePointInPercentage * 100
                     }%" class="point top">
                         <div class="line"></div>
                     </div>
@@ -235,7 +240,7 @@ export default () => {
                 hawsersHTML += `
                 <a href="#simulation-canvas" class="hawserbreak-btn">
                     <div style="left:${
-                        hawsersData[i].timePointInPercentage * 100
+                        sortedHawsersData[i].timePointInPercentage * 100
                     }%" class="point bottom">
                         <div class="line"></div>
                     </div>
@@ -246,10 +251,10 @@ export default () => {
         hawsersTimeline.innerHTML = hawsersHTML;
 
         let subtimelinesHTML = "";
-        hawsersData.map(() => {
+        sortedHawsersData.map((dataItem) => {
             subtimelinesHTML += `
                 <div class="sub-timeline-container-content" id="timeline-container">
-                    <div id="timeline" class="timeline">
+                    <div id="timeline" class="timeline" dataindex=${dataItem.id} >
                     </div>
                 </div>
             `;
@@ -261,31 +266,40 @@ export default () => {
         const breakEventButtons = document.querySelectorAll(".hawserbreak-btn");
         for (let i = 0; i < breakEventButtons.length; i++) {
             breakEventButtons[i].addEventListener("click", () => {
-                controls.setAnimationProgress(hawsersData[i].timePointIndex);
+                controls.setAnimationProgress(sortedHawsersData[i].timePointIndex);
                 controls.setPause();
             });
         }
+
+        addTitles(sortedHawsersData, titleDivHawsers);
+        //addBreakpointsToSubtimelines(sortedHawsersData);
     };
 
     let hawserButton = document.getElementById("open-hawsers");
     hawserButton.addEventListener("click", () => {
         addHawserTimelines.classList.toggle("visible");
+        titleDivHawsers.classList.toggle("visible");
     });
 
     const fendersTimeline = document.getElementById("fender-breakpoints");
     const addFenderTimelines = document.getElementById(
         "sub-timeline-container-content-fenders"
     );
+
+    const titleDivFenders = document.getElementById("sub-timeline-titles-fenders");
+
     const addDataToFendersTimeline = async (data, controls) => {
         const fendersData = data.get().events.fenderBreaks;
 
+        const sortedFendersData = fendersData.sort((a, b) => a.id - b.id);
+
         let fendersHTML = "";
-        for (let i = 0; i < fendersData.length; i++) {
+        for (let i = 0; i < sortedFendersData.length; i++) {
             if (i % 2 === 0) {
                 fendersHTML += `
                 <a href="#simulation-canvas" class="fenderbreak-btn">
                     <div style="left:${
-                        fendersData[i].timePointInPercentage * 100
+                        sortedFendersData[i].timePointInPercentage * 100
                     }%" class="point top">
                         <div class="line"></div>
                     </div>
@@ -295,7 +309,7 @@ export default () => {
                 fendersHTML += `
                 <a href="#simulation-canvas" class="fenderbreak-btn">
                     <div style="left:${
-                        fendersData[i].timePointInPercentage * 100
+                        sortedFendersData[i].timePointInPercentage * 100
                     }%" class="point bottom">
                         <div class="line"></div>
                     </div>
@@ -308,10 +322,10 @@ export default () => {
         }
 
         let subtimelinesHTML = "";
-        fendersData.map(() => {
+        sortedFendersData.map((dataItem) => {
             subtimelinesHTML += `
                 <div class="sub-timeline-container-content" id="timeline-container">
-                    <div id="timeline" class="timeline">
+                    <div id="timeline" class="timeline" dataindex=${dataItem.id} >
                     </div>
                 </div>
             `;
@@ -321,14 +335,48 @@ export default () => {
         const breakEventButtons = document.querySelectorAll(".fenderbreak-btn");
         for (let i = 0; i < breakEventButtons.length; i++) {
             breakEventButtons[i].addEventListener("click", () => {
-                controls.setAnimationProgress(fendersData[i].timePointIndex);
+                controls.setAnimationProgress(sortedFendersData[i].timePointIndex);
                 controls.setPause();
             });
         }
+
+        addTitles(sortedFendersData, titleDivFenders);
+
     };
+
+    // const addBreakpointsToSubtimelines = (data) => {
+    //     const timeline = document.getElementById("timeline");
+    //     let subtimelineHTML = "";
+    //     data.map((dataItem) => {
+    //         let test = timeline.getAttribute("dataindex");
+    //         console.log(test);
+    //         subtimelineHTML += `
+    //             <div class="point">
+    //                 ${dataItem.id}
+    //             </div>
+    //         `
+        
+    //         test.innerHTML = subtimelineHTML;
+    //     });
+    // }
+
+    const addTitles = (data, container) => {
+
+        let subtimelinesTitles = "";
+        data.map((dataItem) => {
+            subtimelinesTitles += `
+                <div class="sub-timeline-title">
+                    <p>ID: ${dataItem.id}</p>
+                </div>
+              `
+              ;
+          });
+          container.innerHTML += subtimelinesTitles;
+      }
 
     let fenderButton = document.getElementById("open-fenders");
     fenderButton.addEventListener("click", () => {
         addFenderTimelines.classList.toggle("visible");
+        titleDivFenders.classList.toggle("visible");
     });
 };
