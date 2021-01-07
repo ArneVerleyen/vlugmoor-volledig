@@ -287,9 +287,39 @@ label {
                         &-hawsers,
                         &-fenders {
                             display: none;
-                            margin-top: 20px;
                             .sub-timeline-container-content {
                                 margin: 20px 0px;
+                                &:first-of-type {
+                                    margin-top: 40px;
+                                }
+                                .timeline {
+                                    .hawserbreak-btn,
+                                    .fenderbreak-btn {
+                                        .point {
+                                            background-color: lightgrey;
+                                            position: absolute;
+                                            display: flex;
+                                            justify-content: center;
+                                            border: 1px solid #ff664f;
+                                            border-radius: 15px;
+                                            width: 10px;
+                                            height: 10px;
+                                            margin-left: -5px;
+                                            margin-bottom: -10px;
+                                            z-index: 3;
+                                            top: -4px;
+                                        }
+                                    }
+                                    .point-danger {
+                                        background-color: #f7cb40;
+                                        position: absolute;
+                                        border: none;
+                                        border-radius: 0;
+                                        width: 1px;
+                                        height: 100%;
+                                        z-index: 2;
+                                    }
+                                }
                             }
                             &.visible {
                                 display: block;

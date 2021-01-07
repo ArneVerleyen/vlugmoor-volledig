@@ -222,16 +222,23 @@ export default () => {
     );
 
     const addDataToHawsersTimeline = async (data, controls) => {
-        const hawsersData = data.get().events.hawserBreaks;
-        const sortedHawsersData = hawsersData.sort((a, b) => a.id - b.id);
+        const hawserDangerData = data.get().events.hawsers;
+        const filteredHawserDangerData = hawserDangerData.filter((dataItem) => {
+            return dataItem.limit === 0.5;
+        });
+
+        const hawserBreaksData = data.get().events.hawserBreaks;
+        const sortedHawserBreaksData = hawserBreaksData.sort(
+            (a, b) => a.id - b.id
+        );
 
         let hawsersHTML = "";
-        for (let i = 0; i < sortedHawsersData.length; i++) {
+        for (let i = 0; i < sortedHawserBreaksData.length; i++) {
             if (i % 2 === 0) {
                 hawsersHTML += `
                 <a href="#simulation-canvas" class="hawserbreak-btn">
                     <div style="left:${
-                        sortedHawsersData[i].timePointInPercentage * 100
+                        sortedHawserBreaksData[i].timePointInPercentage * 100
                     }%" class="point top">
                         <div class="line"></div>
                     </div>
@@ -241,7 +248,7 @@ export default () => {
                 hawsersHTML += `
                 <a href="#simulation-canvas" class="hawserbreak-btn">
                     <div style="left:${
-                        sortedHawsersData[i].timePointInPercentage * 100
+                        sortedHawserBreaksData[i].timePointInPercentage * 100
                     }%" class="point bottom">
                         <div class="line"></div>
                     </div>
@@ -252,13 +259,17 @@ export default () => {
         hawsersTimeline.innerHTML = hawsersHTML;
 
         let subtimelinesHTML = "";
-        sortedHawsersData.map((dataItem) => {
-            subtimelinesHTML += `
+        if (sortedHawserBreaksData.length > 0) {
+            sortedHawserBreaksData.map((dataItem) => {
+                subtimelinesHTML += `
                 <div class="sub-timeline-container-content" id="timeline-container">
                     <div id="timeline" class="timeline" data-type="hawser" data-id="${dataItem.id}"></div>
                 </div>
-            `;
-        });
+                `;
+            });
+        } else {
+            subtimelinesHTML += "<p>Er is geen data.</p>";
+        }
         if (hawsersHTML !== null) {
             addHawserTimelines.innerHTML = subtimelinesHTML;
         }
@@ -267,14 +278,23 @@ export default () => {
         for (let i = 0; i < breakEventButtons.length; i++) {
             breakEventButtons[i].addEventListener("click", () => {
                 controls.setAnimationProgress(
-                    sortedHawsersData[i].timePointIndex
+                    sortedHawserBreaksData[i].timePointIndex
                 );
                 controls.setPause();
             });
         }
 
-        addTitles(sortedHawsersData, titleDivHawsers);
-        addBreakpointsToSubtimelines(sortedHawsersData, "hawser", controls);
+        addTitles(sortedHawserBreaksData, titleDivHawsers);
+        addDangerZonesToSubtimelines(
+            filteredHawserDangerData,
+            "hawser",
+            controls
+        );
+        addBreakpointsToSubtimelines(
+            sortedHawserBreaksData,
+            "hawser",
+            controls
+        );
     };
 
     let hawserButton = document.getElementById("open-hawsers");
@@ -292,16 +312,23 @@ export default () => {
     );
 
     const addDataToFendersTimeline = async (data, controls) => {
-        const fendersData = data.get().events.fenderBreaks;
-        const sortedFendersData = fendersData.sort((a, b) => a.id - b.id);
+        const fenderDangerData = data.get().events.fender;
+        const filteredFenderDangerData = fenderDangerData.filter((dataItem) => {
+            return dataItem.limit === 0.5;
+        });
+
+        const fenderBreaksData = data.get().events.fenderBreaks;
+        const sortedFenderBreaksData = fenderBreaksData.sort(
+            (a, b) => a.id - b.id
+        );
 
         let fendersHTML = "";
-        for (let i = 0; i < sortedFendersData.length; i++) {
+        for (let i = 0; i < sortedFenderBreaksData.length; i++) {
             if (i % 2 === 0) {
                 fendersHTML += `
                 <a href="#simulation-canvas" class="fenderbreak-btn">
                     <div style="left:${
-                        sortedFendersData[i].timePointInPercentage * 100
+                        sortedFenderBreaksData[i].timePointInPercentage * 100
                     }%" class="point top">
                         <div class="line"></div>
                     </div>
@@ -311,7 +338,7 @@ export default () => {
                 fendersHTML += `
                 <a href="#simulation-canvas" class="fenderbreak-btn">
                     <div style="left:${
-                        sortedFendersData[i].timePointInPercentage * 100
+                        sortedFenderBreaksData[i].timePointInPercentage * 100
                     }%" class="point bottom">
                         <div class="line"></div>
                     </div>
@@ -324,27 +351,40 @@ export default () => {
         }
 
         let subtimelinesHTML = "";
-        sortedFendersData.map((dataItem) => {
-            subtimelinesHTML += `
+        if (sortedFenderBreaksData.length > 0) {
+            sortedFenderBreaksData.map((dataItem) => {
+                subtimelinesHTML += `
                 <div class="sub-timeline-container-content" id="timeline-container">
                     <div id="timeline" class="timeline" data-type="fender" data-id="${dataItem.id}"></div>
                 </div>
-            `;
-        });
+                `;
+            });
+        } else {
+            subtimelinesHTML += "<p>Er is geen data.</p>";
+        }
         addFenderTimelines.innerHTML = subtimelinesHTML;
 
         const breakEventButtons = document.querySelectorAll(".fenderbreak-btn");
         for (let i = 0; i < breakEventButtons.length; i++) {
             breakEventButtons[i].addEventListener("click", () => {
                 controls.setAnimationProgress(
-                    sortedFendersData[i].timePointIndex
+                    sortedFenderBreaksData[i].timePointIndex
                 );
                 controls.setPause();
             });
         }
 
-        addTitles(sortedFendersData, titleDivFenders);
-        addBreakpointsToSubtimelines(sortedFendersData, "fender", controls);
+        addTitles(sortedFenderBreaksData, titleDivFenders);
+        addDangerZonesToSubtimelines(
+            filteredFenderDangerData,
+            "fender",
+            controls
+        );
+        addBreakpointsToSubtimelines(
+            sortedFenderBreaksData,
+            "fender",
+            controls
+        );
     };
 
     let fenderButton = document.getElementById("open-fenders");
@@ -357,9 +397,9 @@ export default () => {
         let subtimelinesTitles = "";
         data.map((dataItem) => {
             subtimelinesTitles += `
-              <div class="sub-timeline-title">
-                  <p>ID: ${dataItem.id}</p>
-              </div>
+            <div class="sub-timeline-title">
+                <p>ID: ${dataItem.id}</p>
+            </div>
             `;
         });
         container.innerHTML += subtimelinesTitles;
@@ -381,13 +421,11 @@ export default () => {
             <a href="#simulation-canvas" class="${type}break-btn">
                 <div style="left:${
                     dataItem.timePointInPercentage * 100
-                }%" class="point">
-                    ${dataItem.id}
-                </div>
+                }%" class="point"></div>
             </a>
             `;
 
-            currentTimeline.innerHTML = subtimelineHTML;
+            currentTimeline.innerHTML += subtimelineHTML;
         });
 
         const breakEventButtons = document.querySelectorAll(
@@ -397,6 +435,40 @@ export default () => {
             breakEventButtons[i].addEventListener("click", () => {
                 controls.setAnimationProgress(
                     data[i < data.length ? i : i - data.length].timePointIndex
+                );
+                controls.setPause();
+            });
+        }
+    };
+
+    const addDangerZonesToSubtimelines = (data, type, controls) => {
+        let allTimelines = document.querySelectorAll(".timeline");
+        allTimelines = [...allTimelines];
+        let currentTimeline = null;
+        data.map((dataItem) => {
+            currentTimeline = allTimelines.find((timeline) => {
+                return (
+                    timeline.dataset.type === type &&
+                    timeline.dataset.id === dataItem.id.toString()
+                );
+            });
+
+            let subtimelineHTML = `
+            <a href="#simulation-canvas">
+                <div class="point-danger" data-timestamp="${
+                    dataItem.timePointIndex
+                }" style="left:${dataItem.timePointInPercentage * 100}%"></div>
+            </a>
+            `;
+
+            currentTimeline.innerHTML += subtimelineHTML;
+        });
+
+        const dangerZoneButton = document.querySelectorAll(`.point-danger`);
+        for (let i = 0; i < dangerZoneButton.length; i++) {
+            dangerZoneButton[i].addEventListener("click", () => {
+                controls.setAnimationProgress(
+                    dangerZoneButton[i].dataset.timestamp
                 );
                 controls.setPause();
             });
