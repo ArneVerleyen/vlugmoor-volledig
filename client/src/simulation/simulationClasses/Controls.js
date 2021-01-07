@@ -109,8 +109,11 @@ export default class Controls {
             const progress = document.getElementById("timeline-progress");
             progress.style.width = `${simInfo.timePointInPercentage * 100}%`;
 
-            const hawserProgress = document.getElementById("timeline-progress-all")
+            const hawserProgress = document.getElementById("timeline-progress-hawsers");
             hawserProgress.style.left = `${simInfo.timePointInPercentage * 100}%`;
+
+            const fenderProgress = document.getElementById("timeline-progress-fenders");
+            fenderProgress.style.left = `${simInfo.timePointInPercentage * 100}%`;
         });
 
         document.getElementById("timeline-container").onclick = (e) => {
