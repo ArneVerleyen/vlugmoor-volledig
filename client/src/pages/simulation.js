@@ -108,47 +108,47 @@ export default () => {
     // on upload change label
     xlsxInput.addEventListener("change", (e) => {
         const el = document.getElementById("metadata-input-label");
-        const bg = document.getElementById("metadata-input-bg");
         if (e.target.files[0]) {
             el.innerHTML = e.target.files[0].name;
             el.parentElement.classList.add("custom-button--uploaded");
-            bg.style.width = "100%";
         } else {
             el.parentElement.classList.remove("custom-button--uploaded");
             el.innerHTML = "Bestand kiezen";
-            bg.style.width = "0";
         }
     });
     forcesInput.addEventListener("change", (e) => {
         const el = document.getElementById("forces-input-label");
-        const bg = document.getElementById("forces-input-bg");
         if (e.target.files[0]) {
             el.innerHTML = e.target.files[0].name;
             el.parentElement.classList.add("custom-button--uploaded");
-            bg.style.width = "100%";
         } else {
             el.parentElement.classList.remove("custom-button--uploaded");
             el.innerHTML = "Bestand kiezen";
-            bg.style.width = "0";
         }
     });
     coordsInput.addEventListener("change", (e) => {
         const el = document.getElementById("coords-input-label");
-        const bg = document.getElementById("coords-input-bg");
         if (e.target.files[0]) {
             el.innerHTML = e.target.files[0].name;
             el.parentElement.classList.add("custom-button--uploaded");
-            bg.style.width = "100%";
         } else {
             el.parentElement.classList.remove("custom-button--uploaded");
             el.innerHTML = "Bestand kiezen";
-            bg.style.width = "0";
         }
     });
 
     // when files are submitted
     submit.addEventListener("click", (e) => {
         const files = {};
+
+        // change displayed text in popup
+        const uploadContainer = document.getElementById("upload-container");
+        const uploadForm = uploadContainer.innerHTML;
+        uploadContainer.innerHTML = `
+            <div class="upload-container-content">
+                <h1>Loading...</h1><p>This popup will close automatically.</p>
+            </div>
+            `;
 
         // read files
         const readerXSLX = new FileReader();
@@ -201,16 +201,40 @@ export default () => {
             readerXSLX.readAsBinaryString(xlsxInput.files[0]);
             readerForces.readAsBinaryString(forcesInput.files[0]);
             readerCoords.readAsBinaryString(coordsInput.files[0]);
+
+            // close popup after 5 seconds
+            setTimeout(() => {
+                uploadContainer.classList.remove("visible");
+
+                const uploadBtn = document.getElementById(
+                    "open-upload-container"
+                );
+                uploadBtn.classList.add("hidden");
+                upload.classList.remove("hidden");
+            }, 5000);
         } catch {
             alert(
                 "Er ging iets fout bij het inladen van de bestanden. Probeer het opnieuw."
             );
+
+            // reset popup
+            uploadContainer.innerHTML = uploadForm;
         }
     });
 
     upload.addEventListener("click", () => {
         // Handle data
         console.log(serverData);
+    });
+
+    const openUploadBtn = document.getElementById("open-upload-container");
+    const closeUploadBtn = document.getElementById("close-upload-container");
+    const uploadContainer = document.getElementById("upload-container");
+    openUploadBtn.addEventListener("click", () => {
+        uploadContainer.classList.add("visible");
+    });
+    closeUploadBtn.addEventListener("click", () => {
+        uploadContainer.classList.remove("visible");
     });
 
     const hawsersTimeline = document.getElementById("hawser-breakpoints");
@@ -236,23 +260,23 @@ export default () => {
         for (let i = 0; i < sortedHawserBreaksData.length; i++) {
             if (i % 2 === 0) {
                 hawsersHTML += `
-                <a href="#simulation-canvas" class="hawserbreak-btn">
+                <div class="hawserbreak-btn">
                     <div style="left:${
                         sortedHawserBreaksData[i].timePointInPercentage * 100
                     }%" class="point top">
                         <div class="line"></div>
                     </div>
-                </a>
+                </div>
                 `;
             } else {
                 hawsersHTML += `
-                <a href="#simulation-canvas" class="hawserbreak-btn">
+                <div class="hawserbreak-btn">
                     <div style="left:${
                         sortedHawserBreaksData[i].timePointInPercentage * 100
                     }%" class="point bottom">
                         <div class="line"></div>
                     </div>
-                </a>
+                </div>
                 `;
             }
         }
@@ -281,6 +305,7 @@ export default () => {
                     sortedHawserBreaksData[i].timePointIndex
                 );
                 controls.setPause();
+                document.getElementById("simulation-canvas").scrollIntoView();
             });
         }
 
@@ -326,23 +351,23 @@ export default () => {
         for (let i = 0; i < sortedFenderBreaksData.length; i++) {
             if (i % 2 === 0) {
                 fendersHTML += `
-                <a href="#simulation-canvas" class="fenderbreak-btn">
+                <div class="fenderbreak-btn">
                     <div style="left:${
                         sortedFenderBreaksData[i].timePointInPercentage * 100
                     }%" class="point top">
                         <div class="line"></div>
                     </div>
-                </a>
+                </div>
                 `;
             } else {
                 fendersHTML += `
-                <a href="#simulation-canvas" class="fenderbreak-btn">
+                <div class="fenderbreak-btn">
                     <div style="left:${
                         sortedFenderBreaksData[i].timePointInPercentage * 100
                     }%" class="point bottom">
                         <div class="line"></div>
                     </div>
-                </a>
+                </div>
                 `;
             }
         }
@@ -371,6 +396,7 @@ export default () => {
                     sortedFenderBreaksData[i].timePointIndex
                 );
                 controls.setPause();
+                document.getElementById("simulation-canvas").scrollIntoView();
             });
         }
 
@@ -418,11 +444,11 @@ export default () => {
             });
 
             let subtimelineHTML = `
-            <a href="#simulation-canvas" class="${type}break-btn">
+            <div class="${type}break-btn">
                 <div style="left:${
                     dataItem.timePointInPercentage * 100
                 }%" class="point"></div>
-            </a>
+            </div>
             `;
 
             currentTimeline.innerHTML += subtimelineHTML;
@@ -437,6 +463,7 @@ export default () => {
                     data[i < data.length ? i : i - data.length].timePointIndex
                 );
                 controls.setPause();
+                document.getElementById("simulation-canvas").scrollIntoView();
             });
         }
     };
@@ -454,11 +481,9 @@ export default () => {
             });
 
             let subtimelineHTML = `
-            <a href="#simulation-canvas">
-                <div class="point-danger" data-timestamp="${
-                    dataItem.timePointIndex
-                }" style="left:${dataItem.timePointInPercentage * 100}%"></div>
-            </a>
+            <div class="point-danger" data-timestamp="${
+                dataItem.timePointIndex
+            }" style="left:${dataItem.timePointInPercentage * 100}%"></div>
             `;
 
             currentTimeline.innerHTML += subtimelineHTML;
@@ -471,6 +496,7 @@ export default () => {
                     dangerZoneButton[i].dataset.timestamp
                 );
                 controls.setPause();
+                document.getElementById("simulation-canvas").scrollIntoView();
             });
         }
     };
