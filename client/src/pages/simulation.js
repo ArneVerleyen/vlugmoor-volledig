@@ -47,8 +47,31 @@ export default () => {
         );
         console.log(data.get());
         serverData = data.get();
+
+        /*
+         * begin code van PGM-studenten
+         */
+        // close popup after data has been created
+        if (data) {
+            const uploadContainer = document.getElementById("upload-container");
+            uploadContainer.classList.remove("visible");
+
+            const uploadBtn = document.getElementById("open-upload-container");
+            uploadBtn.classList.add("hidden");
+
+            const upload = document.getElementById("upload");
+            upload.classList.remove("hidden");
+
+            const newSimulation = document.getElementById("new-simulation");
+            newSimulation.classList.remove("hidden");
+        }
+
+        // add data to timelines
         addDataToHawsersTimeline(data, controls);
         addDataToFendersTimeline(data, controls);
+        /*
+         * einde code van PGM-studenten
+         */
 
         // SIMULATION
         simulation.addData(data);
@@ -137,13 +160,26 @@ export default () => {
         }
     });
 
+    const openUploadBtn = document.getElementById("open-upload-container");
+    openUploadBtn.addEventListener("click", () => {
+        uploadContainer.classList.add("visible");
+
+        const closeUploadBtn = document.getElementById(
+            "close-upload-container"
+        );
+        closeUploadBtn.addEventListener("click", () => {
+            uploadContainer.classList.remove("visible");
+        });
+    });
+
+    const uploadContainer = document.getElementById("upload-container");
+    const uploadForm = uploadContainer.innerHTML;
+
     // when files are submitted
     submit.addEventListener("click", (e) => {
         const files = {};
 
         // change displayed text in popup
-        const uploadContainer = document.getElementById("upload-container");
-        const uploadForm = uploadContainer.innerHTML;
         uploadContainer.innerHTML = `
             <div class="upload-container-content">
                 <h1>Loading...</h1><p>This popup will close automatically.</p>
@@ -201,17 +237,6 @@ export default () => {
             readerXSLX.readAsBinaryString(xlsxInput.files[0]);
             readerForces.readAsBinaryString(forcesInput.files[0]);
             readerCoords.readAsBinaryString(coordsInput.files[0]);
-
-            // close popup after 5 seconds
-            setTimeout(() => {
-                uploadContainer.classList.remove("visible");
-
-                const uploadBtn = document.getElementById(
-                    "open-upload-container"
-                );
-                uploadBtn.classList.add("hidden");
-                upload.classList.remove("hidden");
-            }, 5000);
         } catch {
             alert(
                 "Er ging iets fout bij het inladen van de bestanden. Probeer het opnieuw."
@@ -219,22 +244,14 @@ export default () => {
 
             // reset popup
             uploadContainer.innerHTML = uploadForm;
+
+            uploadContainer.classList.remove("visible");
         }
     });
 
     upload.addEventListener("click", () => {
         // Handle data
         console.log(serverData);
-    });
-
-    const openUploadBtn = document.getElementById("open-upload-container");
-    const closeUploadBtn = document.getElementById("close-upload-container");
-    const uploadContainer = document.getElementById("upload-container");
-    openUploadBtn.addEventListener("click", () => {
-        uploadContainer.classList.add("visible");
-    });
-    closeUploadBtn.addEventListener("click", () => {
-        uploadContainer.classList.remove("visible");
     });
 
     const hawsersTimeline = document.getElementById("hawser-breakpoints");
@@ -247,9 +264,17 @@ export default () => {
 
     const addDataToHawsersTimeline = async (data, controls) => {
         const hawserDangerData = data.get().events.hawsers;
-        const filteredHawserDangerData = hawserDangerData.filter((dataItem) => {
-            return dataItem.limit === 0.5;
-        });
+        const filteredHawserDangerData = hawserDangerData.filter(
+            (dataItem, i) => {
+                if (i > 0) {
+                    if (hawserDangerData[i - 1].limit !== 0.6) {
+                        return dataItem;
+                    }
+                } else {
+                    return dataItem;
+                }
+            }
+        );
 
         const hawserBreaksData = data.get().events.hawserBreaks;
         const sortedHawserBreaksData = hawserBreaksData.sort(
@@ -338,9 +363,17 @@ export default () => {
 
     const addDataToFendersTimeline = async (data, controls) => {
         const fenderDangerData = data.get().events.fender;
-        const filteredFenderDangerData = fenderDangerData.filter((dataItem) => {
-            return dataItem.limit === 0.5;
-        });
+        const filteredFenderDangerData = fenderDangerData.filter(
+            (dataItem, i) => {
+                if (i > 0) {
+                    if (fenderDangerData[i - 1].limit !== 0.6) {
+                        return dataItem;
+                    }
+                } else {
+                    return dataItem;
+                }
+            }
+        );
 
         const fenderBreaksData = data.get().events.fenderBreaks;
         const sortedFenderBreaksData = fenderBreaksData.sort(
