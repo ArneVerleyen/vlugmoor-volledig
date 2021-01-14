@@ -47,8 +47,31 @@ export default () => {
         );
         console.log(data.get());
         serverData = data.get();
+
+        /*
+         * begin code van PGM-studenten
+         */
+        // close popup after data has been created
+        if (data) {
+            const uploadContainer = document.getElementById("upload-container");
+            uploadContainer.classList.remove("visible");
+
+            const uploadBtn = document.getElementById("open-upload-container");
+            uploadBtn.classList.add("hidden");
+
+            const upload = document.getElementById("upload");
+            upload.classList.remove("hidden");
+
+            // const newSimulation = document.getElementById("new-simulation");
+            // newSimulation.classList.remove("hidden");
+        }
+
+        // add data to timelines
         addDataToHawsersTimeline(data, controls);
         addDataToFendersTimeline(data, controls);
+        /*
+         * einde code van PGM-studenten
+         */
 
         // SIMULATION
         simulation.addData(data);
@@ -108,47 +131,60 @@ export default () => {
     // on upload change label
     xlsxInput.addEventListener("change", (e) => {
         const el = document.getElementById("metadata-input-label");
-        const bg = document.getElementById("metadata-input-bg");
         if (e.target.files[0]) {
             el.innerHTML = e.target.files[0].name;
             el.parentElement.classList.add("custom-button--uploaded");
-            bg.style.width = "100%";
         } else {
             el.parentElement.classList.remove("custom-button--uploaded");
             el.innerHTML = "Bestand kiezen";
-            bg.style.width = "0";
         }
     });
     forcesInput.addEventListener("change", (e) => {
         const el = document.getElementById("forces-input-label");
-        const bg = document.getElementById("forces-input-bg");
         if (e.target.files[0]) {
             el.innerHTML = e.target.files[0].name;
             el.parentElement.classList.add("custom-button--uploaded");
-            bg.style.width = "100%";
         } else {
             el.parentElement.classList.remove("custom-button--uploaded");
             el.innerHTML = "Bestand kiezen";
-            bg.style.width = "0";
         }
     });
     coordsInput.addEventListener("change", (e) => {
         const el = document.getElementById("coords-input-label");
-        const bg = document.getElementById("coords-input-bg");
         if (e.target.files[0]) {
             el.innerHTML = e.target.files[0].name;
             el.parentElement.classList.add("custom-button--uploaded");
-            bg.style.width = "100%";
         } else {
             el.parentElement.classList.remove("custom-button--uploaded");
             el.innerHTML = "Bestand kiezen";
-            bg.style.width = "0";
         }
     });
+
+    const openUploadBtn = document.getElementById("open-upload-container");
+    openUploadBtn.addEventListener("click", () => {
+        uploadContainer.classList.add("visible");
+
+        const closeUploadBtn = document.getElementById(
+            "close-upload-container"
+        );
+        closeUploadBtn.addEventListener("click", () => {
+            uploadContainer.classList.remove("visible");
+        });
+    });
+
+    const uploadContainer = document.getElementById("upload-container");
+    const uploadForm = uploadContainer.innerHTML;
 
     // when files are submitted
     submit.addEventListener("click", (e) => {
         const files = {};
+
+        // change displayed text in popup
+        uploadContainer.innerHTML = `
+            <div class="upload-container-content">
+                <h1>Loading...</h1><p>This popup will close automatically.</p>
+            </div>
+            `;
 
         // read files
         const readerXSLX = new FileReader();
@@ -205,6 +241,11 @@ export default () => {
             alert(
                 "Er ging iets fout bij het inladen van de bestanden. Probeer het opnieuw."
             );
+
+            // reset popup
+            uploadContainer.innerHTML = uploadForm;
+
+            uploadContainer.classList.remove("visible");
         }
     });
 
@@ -223,9 +264,17 @@ export default () => {
 
     const addDataToHawsersTimeline = async (data, controls) => {
         const hawserDangerData = data.get().events.hawsers;
-        const filteredHawserDangerData = hawserDangerData.filter((dataItem) => {
-            return dataItem.limit === 0.5;
-        });
+        const filteredHawserDangerData = hawserDangerData.filter(
+            (dataItem, i) => {
+                if (i > 0) {
+                    if (hawserDangerData[i - 1].limit !== 0.6) {
+                        return dataItem;
+                    }
+                } else {
+                    return dataItem;
+                }
+            }
+        );
 
         const hawserBreaksData = data.get().events.hawserBreaks;
         const sortedHawserBreaksData = hawserBreaksData.sort(
@@ -236,23 +285,23 @@ export default () => {
         for (let i = 0; i < sortedHawserBreaksData.length; i++) {
             if (i % 2 === 0) {
                 hawsersHTML += `
-                <a href="#simulation-canvas" class="hawserbreak-btn">
+                <div class="hawserbreak-btn">
                     <div style="left:${
                         sortedHawserBreaksData[i].timePointInPercentage * 100
                     }%" class="point top">
                         <div class="line"></div>
                     </div>
-                </a>
+                </div>
                 `;
             } else {
                 hawsersHTML += `
-                <a href="#simulation-canvas" class="hawserbreak-btn">
+                <div class="hawserbreak-btn">
                     <div style="left:${
                         sortedHawserBreaksData[i].timePointInPercentage * 100
                     }%" class="point bottom">
                         <div class="line"></div>
                     </div>
-                </a>
+                </div>
                 `;
             }
         }
@@ -281,6 +330,7 @@ export default () => {
                     sortedHawserBreaksData[i].timePointIndex
                 );
                 controls.setPause();
+                document.getElementById("simulation-canvas").scrollIntoView();
             });
         }
 
@@ -313,9 +363,17 @@ export default () => {
 
     const addDataToFendersTimeline = async (data, controls) => {
         const fenderDangerData = data.get().events.fender;
-        const filteredFenderDangerData = fenderDangerData.filter((dataItem) => {
-            return dataItem.limit === 0.5;
-        });
+        const filteredFenderDangerData = fenderDangerData.filter(
+            (dataItem, i) => {
+                if (i > 0) {
+                    if (fenderDangerData[i - 1].limit !== 0.6) {
+                        return dataItem;
+                    }
+                } else {
+                    return dataItem;
+                }
+            }
+        );
 
         const fenderBreaksData = data.get().events.fenderBreaks;
         const sortedFenderBreaksData = fenderBreaksData.sort(
@@ -326,23 +384,23 @@ export default () => {
         for (let i = 0; i < sortedFenderBreaksData.length; i++) {
             if (i % 2 === 0) {
                 fendersHTML += `
-                <a href="#simulation-canvas" class="fenderbreak-btn">
+                <div class="fenderbreak-btn">
                     <div style="left:${
                         sortedFenderBreaksData[i].timePointInPercentage * 100
                     }%" class="point top">
                         <div class="line"></div>
                     </div>
-                </a>
+                </div>
                 `;
             } else {
                 fendersHTML += `
-                <a href="#simulation-canvas" class="fenderbreak-btn">
+                <div class="fenderbreak-btn">
                     <div style="left:${
                         sortedFenderBreaksData[i].timePointInPercentage * 100
                     }%" class="point bottom">
                         <div class="line"></div>
                     </div>
-                </a>
+                </div>
                 `;
             }
         }
@@ -371,6 +429,7 @@ export default () => {
                     sortedFenderBreaksData[i].timePointIndex
                 );
                 controls.setPause();
+                document.getElementById("simulation-canvas").scrollIntoView();
             });
         }
 
@@ -418,11 +477,11 @@ export default () => {
             });
 
             let subtimelineHTML = `
-            <a href="#simulation-canvas" class="${type}break-btn">
+            <div class="${type}break-btn">
                 <div style="left:${
                     dataItem.timePointInPercentage * 100
                 }%" class="point"></div>
-            </a>
+            </div>
             `;
 
             currentTimeline.innerHTML += subtimelineHTML;
@@ -437,6 +496,7 @@ export default () => {
                     data[i < data.length ? i : i - data.length].timePointIndex
                 );
                 controls.setPause();
+                document.getElementById("simulation-canvas").scrollIntoView();
             });
         }
     };
@@ -454,11 +514,9 @@ export default () => {
             });
 
             let subtimelineHTML = `
-            <a href="#simulation-canvas">
-                <div class="point-danger" data-timestamp="${
-                    dataItem.timePointIndex
-                }" style="left:${dataItem.timePointInPercentage * 100}%"></div>
-            </a>
+            <div class="point-danger" data-timestamp="${
+                dataItem.timePointIndex
+            }" style="left:${dataItem.timePointInPercentage * 100}%"></div>
             `;
 
             currentTimeline.innerHTML += subtimelineHTML;
@@ -471,6 +529,7 @@ export default () => {
                     dangerZoneButton[i].dataset.timestamp
                 );
                 controls.setPause();
+                document.getElementById("simulation-canvas").scrollIntoView();
             });
         }
     };
