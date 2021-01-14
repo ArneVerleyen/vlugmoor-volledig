@@ -62,8 +62,8 @@ export default () => {
             const upload = document.getElementById("upload");
             upload.classList.remove("hidden");
 
-            const newSimulation = document.getElementById("new-simulation");
-            newSimulation.classList.remove("hidden");
+            // const newSimulation = document.getElementById("new-simulation");
+            // newSimulation.classList.remove("hidden");
         }
 
         // add data to timelines
