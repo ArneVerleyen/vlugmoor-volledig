@@ -51,7 +51,7 @@ export default () => {
         /*
          * begin code van PGM-studenten
          */
-        // close popup after data has been created
+        // close popup when data loaded
         if (data) {
             const uploadContainer = document.getElementById("upload-container");
             uploadContainer.classList.remove("visible");
@@ -160,6 +160,10 @@ export default () => {
         }
     });
 
+    /*
+     * begin code van PGM-studenten
+     */
+    // add click events to upload buttons
     const openUploadBtn = document.getElementById("open-upload-container");
     openUploadBtn.addEventListener("click", () => {
         uploadContainer.classList.add("visible");
@@ -172,19 +176,29 @@ export default () => {
         });
     });
 
+    // set a default upload form
     const uploadContainer = document.getElementById("upload-container");
     const uploadForm = uploadContainer.innerHTML;
+    /*
+     * einde code van PGM-studenten
+     */
 
     // when files are submitted
     submit.addEventListener("click", (e) => {
         const files = {};
 
-        // change displayed text in popup
+        /*
+         * begin code van PGM-studenten
+         */
+        // change popup text when loading
         uploadContainer.innerHTML = `
-            <div class="upload-container-content">
-                <h1>Loading...</h1><p>This popup will close automatically.</p>
-            </div>
-            `;
+       <div class="upload-container-content">
+       <h1>Loading...</h1><p>This popup will close automatically.</p>
+       </div>
+       `;
+        /*
+         * einde code van PGM-studenten
+         */
 
         // read files
         const readerXSLX = new FileReader();
@@ -242,10 +256,15 @@ export default () => {
                 "Er ging iets fout bij het inladen van de bestanden. Probeer het opnieuw."
             );
 
-            // reset popup
+            /*
+             * begin code van PGM-studenten
+             */
+            // reset & close popup
             uploadContainer.innerHTML = uploadForm;
-
             uploadContainer.classList.remove("visible");
+            /*
+             * einde code van PGM-studenten
+             */
         }
     });
 
@@ -254,6 +273,10 @@ export default () => {
         console.log(serverData);
     });
 
+    /*
+     * begin code van PGM-studenten
+     */
+    // get hawser containers
     const hawsersTimeline = document.getElementById("hawser-breakpoints");
     const addHawserTimelines = document.getElementById(
         "sub-timeline-container-content-hawsers"
@@ -263,10 +286,12 @@ export default () => {
     );
 
     const addDataToHawsersTimeline = async (data, controls) => {
+        // get & filter event data
         const hawserDangerData = data.get().events.hawsers;
         const filteredHawserDangerData = hawserDangerData.filter(
             (dataItem, i) => {
                 if (i > 0) {
+                    // filter out duplicate items
                     if (hawserDangerData[i - 1].limit !== 0.6) {
                         return dataItem;
                     }
@@ -276,13 +301,31 @@ export default () => {
             }
         );
 
+        // get & sort breakevent data
         const hawserBreaksData = data.get().events.hawserBreaks;
         const sortedHawserBreaksData = hawserBreaksData.sort(
+            // sort on ID
             (a, b) => a.id - b.id
         );
 
+        // get all different IDs
+        const hawserIDs = [];
+        sortedHawserBreaksData.map((dataItem, i) => {
+            if (i > 0) {
+                // avoid having duplicate IDs
+                if (dataItem.id !== sortedHawserBreaksData[i - 1].id) {
+                    return hawserIDs.push(dataItem.id);
+                }
+            } else {
+                return hawserIDs.push(dataItem.id);
+            }
+        });
+        console.log(hawserIDs);
+
+        // add HTML for breakevents on timeline
         let hawsersHTML = "";
         for (let i = 0; i < sortedHawserBreaksData.length; i++) {
+            // switch point position above or below the timeline
             if (i % 2 === 0) {
                 hawsersHTML += `
                 <div class="hawserbreak-btn">
@@ -305,27 +348,34 @@ export default () => {
                 `;
             }
         }
-        hawsersTimeline.innerHTML = hawsersHTML;
+        // add points to timeline
+        if (hawsersHTML !== "") {
+            hawsersTimeline.innerHTML = hawsersHTML;
+        }
 
+        // add HTML for subtimelines
         let subtimelinesHTML = "";
-        if (sortedHawserBreaksData.length > 0) {
-            sortedHawserBreaksData.map((dataItem) => {
+        if (hawserIDs.length > 0) {
+            hawserIDs.map((id) => {
                 subtimelinesHTML += `
                 <div class="sub-timeline-container-content" id="timeline-container">
-                    <div id="timeline" class="timeline" data-type="hawser" data-id="${dataItem.id}"></div>
+                    <div id="timeline" class="timeline" data-type="hawser" data-id="${id}"></div>
                 </div>
                 `;
             });
         } else {
             subtimelinesHTML += "<p>Er is geen data.</p>";
         }
-        if (hawsersHTML !== null) {
+        // add subtimelines to subtimeline container
+        if (subtimelinesHTML !== "") {
             addHawserTimelines.innerHTML = subtimelinesHTML;
         }
 
+        // add click events to the breakevent points
         const breakEventButtons = document.querySelectorAll(".hawserbreak-btn");
         for (let i = 0; i < breakEventButtons.length; i++) {
             breakEventButtons[i].addEventListener("click", () => {
+                // go to breakevent in animation
                 controls.setAnimationProgress(
                     sortedHawserBreaksData[i].timePointIndex
                 );
@@ -334,7 +384,8 @@ export default () => {
             });
         }
 
-        addTitles(sortedHawserBreaksData, titleDivHawsers);
+        // add all data to subtimelines
+        addTitles(hawserIDs, titleDivHawsers);
         addDangerZonesToSubtimelines(
             filteredHawserDangerData,
             "hawser",
@@ -347,12 +398,14 @@ export default () => {
         );
     };
 
+    // add click event to open/close subtimelines
     let hawserButton = document.getElementById("open-hawsers");
     hawserButton.addEventListener("click", () => {
         addHawserTimelines.classList.toggle("visible");
         titleDivHawsers.classList.toggle("visible");
     });
 
+    // get fender containers
     const fendersTimeline = document.getElementById("fender-breakpoints");
     const addFenderTimelines = document.getElementById(
         "sub-timeline-container-content-fenders"
@@ -362,10 +415,12 @@ export default () => {
     );
 
     const addDataToFendersTimeline = async (data, controls) => {
+        // get & filter event data
         const fenderDangerData = data.get().events.fender;
         const filteredFenderDangerData = fenderDangerData.filter(
             (dataItem, i) => {
                 if (i > 0) {
+                    // filter out duplicate items
                     if (fenderDangerData[i - 1].limit !== 0.6) {
                         return dataItem;
                     }
@@ -375,13 +430,30 @@ export default () => {
             }
         );
 
+        // get & sort breakevent data
         const fenderBreaksData = data.get().events.fenderBreaks;
         const sortedFenderBreaksData = fenderBreaksData.sort(
+            // sort on ID
             (a, b) => a.id - b.id
         );
 
+        // get all different IDs
+        const fenderIDs = [];
+        sortedFenderBreaksData.map((dataItem, i) => {
+            if (i > 0) {
+                // avoid having duplicate IDs
+                if (dataItem.id !== sortedFenderBreaksData[i - 1].id) {
+                    return fenderIDs.push(dataItem.id);
+                }
+            } else {
+                return fenderIDs.push(dataItem.id);
+            }
+        });
+
+        // add HTML for breakevents on timeline
         let fendersHTML = "";
         for (let i = 0; i < sortedFenderBreaksData.length; i++) {
+            // switch point position above or below the timeline
             if (i % 2 === 0) {
                 fendersHTML += `
                 <div class="fenderbreak-btn">
@@ -404,27 +476,34 @@ export default () => {
                 `;
             }
         }
-        if (fendersHTML !== null) {
+        // add points to timeline
+        if (fendersHTML !== "") {
             fendersTimeline.innerHTML = fendersHTML;
         }
 
+        // add HTML for subtimelines
         let subtimelinesHTML = "";
-        if (sortedFenderBreaksData.length > 0) {
-            sortedFenderBreaksData.map((dataItem) => {
+        if (fenderIDs.length > 0) {
+            fenderIDs.map((id) => {
                 subtimelinesHTML += `
                 <div class="sub-timeline-container-content" id="timeline-container">
-                    <div id="timeline" class="timeline" data-type="fender" data-id="${dataItem.id}"></div>
+                    <div id="timeline" class="timeline" data-type="fender" data-id="${id}"></div>
                 </div>
                 `;
             });
         } else {
             subtimelinesHTML += "<p>Er is geen data.</p>";
         }
-        addFenderTimelines.innerHTML = subtimelinesHTML;
+        // add subtimelines to subtimeline container
+        if (subtimelinesHTML !== "") {
+            addFenderTimelines.innerHTML = subtimelinesHTML;
+        }
 
+        // add click events to the breakevent points
         const breakEventButtons = document.querySelectorAll(".fenderbreak-btn");
         for (let i = 0; i < breakEventButtons.length; i++) {
             breakEventButtons[i].addEventListener("click", () => {
+                // go to breakevent in animation
                 controls.setAnimationProgress(
                     sortedFenderBreaksData[i].timePointIndex
                 );
@@ -433,7 +512,8 @@ export default () => {
             });
         }
 
-        addTitles(sortedFenderBreaksData, titleDivFenders);
+        // add all data to subtimelines
+        addTitles(fenderIDs, titleDivFenders);
         addDangerZonesToSubtimelines(
             filteredFenderDangerData,
             "fender",
@@ -446,6 +526,7 @@ export default () => {
         );
     };
 
+    // add click event to open/close subtimelines
     let fenderButton = document.getElementById("open-fenders");
     fenderButton.addEventListener("click", () => {
         addFenderTimelines.classList.toggle("visible");
@@ -453,22 +534,26 @@ export default () => {
     });
 
     const addTitles = (data, container) => {
+        // add a title for every subtimeline
         let subtimelinesTitles = "";
         data.map((dataItem) => {
             subtimelinesTitles += `
             <div class="sub-timeline-title">
-                <p>ID: ${dataItem.id}</p>
+                <p>ID: ${dataItem}</p>
             </div>
             `;
         });
+        // add titles to title container
         container.innerHTML += subtimelinesTitles;
     };
 
     const addBreakpointsToSubtimelines = (data, type, controls) => {
+        // get all timelines
         let allTimelines = document.querySelectorAll(".timeline");
         allTimelines = [...allTimelines];
         let currentTimeline = null;
         data.map((dataItem) => {
+            // find the timeline where the current breakevent belongs
             currentTimeline = allTimelines.find((timeline) => {
                 return (
                     timeline.dataset.type === type &&
@@ -476,7 +561,8 @@ export default () => {
                 );
             });
 
-            let subtimelineHTML = `
+            // create HTML for breakevent
+            let breakpointHTML = `
             <div class="${type}break-btn">
                 <div style="left:${
                     dataItem.timePointInPercentage * 100
@@ -484,14 +570,17 @@ export default () => {
             </div>
             `;
 
-            currentTimeline.innerHTML += subtimelineHTML;
+            // add breakpoint to current subtimeline
+            currentTimeline.innerHTML += breakpointHTML;
         });
 
+        // add click events to the breakevent points
         const breakEventButtons = document.querySelectorAll(
             `.${type}break-btn`
         );
         for (let i = 0; i < breakEventButtons.length; i++) {
             breakEventButtons[i].addEventListener("click", () => {
+                // go to breakevent in animation
                 controls.setAnimationProgress(
                     data[i < data.length ? i : i - data.length].timePointIndex
                 );
@@ -502,10 +591,12 @@ export default () => {
     };
 
     const addDangerZonesToSubtimelines = (data, type, controls) => {
+        // get all timelines
         let allTimelines = document.querySelectorAll(".timeline");
         allTimelines = [...allTimelines];
         let currentTimeline = null;
         data.map((dataItem) => {
+            // find the timeline where the current event belongs
             currentTimeline = allTimelines.find((timeline) => {
                 return (
                     timeline.dataset.type === type &&
@@ -513,18 +604,22 @@ export default () => {
                 );
             });
 
-            let subtimelineHTML = `
+            // create HTML for dangerzone
+            let dangerzoneHTML = `
             <div class="point-danger" data-timestamp="${
                 dataItem.timePointIndex
             }" style="left:${dataItem.timePointInPercentage * 100}%"></div>
             `;
 
-            currentTimeline.innerHTML += subtimelineHTML;
+            // add dangerzone to current subtimeline
+            currentTimeline.innerHTML += dangerzoneHTML;
         });
 
+        // add click events to the dangerzone points
         const dangerZoneButton = document.querySelectorAll(`.point-danger`);
         for (let i = 0; i < dangerZoneButton.length; i++) {
             dangerZoneButton[i].addEventListener("click", () => {
+                // go to dangerzone in animation
                 controls.setAnimationProgress(
                     dangerZoneButton[i].dataset.timestamp
                 );
