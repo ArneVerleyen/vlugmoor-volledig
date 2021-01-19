@@ -34,6 +34,10 @@ label {
     font-size: 20px;
 }
 
+.hidden {
+    display: none !important;
+}
+
 .top-container {
     margin: 0 60px;
     display: flex;
@@ -91,9 +95,6 @@ label {
                 cursor: pointer;
                 background-color: #3a3a3a;
             }
-            &.hidden {
-                display: none;
-            }
         }
         input[type="file"] {
             display: none;
@@ -121,18 +122,16 @@ label {
         }
 
         .upload-container {
-            display: none;
-            &.visible {
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                background-color: rgba(0, 0, 0, 0.6);
-                position: fixed;
-                top: 0;
-                left: 0;
-                width: 100vw;
-                height: 100vh;
-            }
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: rgba(0, 0, 0, 0.6);
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 999;
             &-content {
                 display: flex;
                 flex-direction: column;
@@ -262,11 +261,7 @@ label {
                     .sub-timeline-titles {
                         &-hawsers,
                         &-fenders {
-                            display: none;
                             margin-top: 40px;
-                            &.visible {
-                                display: block;
-                            }
                             p {
                                 margin: 10px 0;
                             }
@@ -333,7 +328,6 @@ label {
                         }
                         &-hawsers,
                         &-fenders {
-                            display: none;
                             .sub-timeline-container-content {
                                 margin: 20px 0px;
                                 &:first-of-type {
@@ -358,20 +352,22 @@ label {
                                             top: -4px;
                                         }
                                     }
-                                    .point-danger {
+                                    .dangerzone {
                                         cursor: pointer;
-                                        background-color: #f7cb40;
                                         position: absolute;
                                         border: none;
                                         border-radius: 0;
                                         width: 1px;
                                         height: 100%;
                                         z-index: 2;
+                                        &.yellow {
+                                            background-color: #f7cb40;
+                                        }
+                                        &.red {
+                                            background-color: #ff664f;
+                                        }
                                     }
                                 }
-                            }
-                            &.visible {
-                                display: block;
                             }
                         }
                     }

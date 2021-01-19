@@ -54,16 +54,16 @@ export default () => {
         // close popup when data loaded
         if (data) {
             const uploadContainer = document.getElementById("upload-container");
-            uploadContainer.classList.remove("visible");
+            uploadContainer.classList.add("hidden");
 
             const uploadBtn = document.getElementById("open-upload-container");
             uploadBtn.classList.add("hidden");
 
-            const upload = document.getElementById("upload");
-            upload.classList.remove("hidden");
+            const serverUpload = document.getElementById("upload");
+            serverUpload.classList.remove("hidden");
 
-            // const newSimulation = document.getElementById("new-simulation");
-            // newSimulation.classList.remove("hidden");
+            const newSimulation = document.getElementById("new-simulation");
+            newSimulation.classList.remove("hidden");
         }
 
         // add data to timelines
@@ -127,6 +127,7 @@ export default () => {
     const coordsInput = document.getElementById("coords-input");
     const submit = document.getElementById("submit");
     const upload = document.getElementById("upload");
+    const newSimulation = document.getElementById("new-simulation");
 
     // on upload change label
     xlsxInput.addEventListener("change", (e) => {
@@ -164,21 +165,18 @@ export default () => {
      * begin code van PGM-studenten
      */
     // add click events to upload buttons
+    const uploadContainer = document.getElementById("upload-container");
     const openUploadBtn = document.getElementById("open-upload-container");
     openUploadBtn.addEventListener("click", () => {
-        uploadContainer.classList.add("visible");
+        uploadContainer.classList.remove("hidden");
 
         const closeUploadBtn = document.getElementById(
             "close-upload-container"
         );
         closeUploadBtn.addEventListener("click", () => {
-            uploadContainer.classList.remove("visible");
+            uploadContainer.classList.add("hidden");
         });
     });
-
-    // set a default upload form
-    const uploadContainer = document.getElementById("upload-container");
-    const uploadForm = uploadContainer.innerHTML;
     /*
      * einde code van PGM-studenten
      */
@@ -186,19 +184,6 @@ export default () => {
     // when files are submitted
     submit.addEventListener("click", (e) => {
         const files = {};
-
-        /*
-         * begin code van PGM-studenten
-         */
-        // change popup text when loading
-        uploadContainer.innerHTML = `
-       <div class="upload-container-content">
-       <h1>Loading...</h1><p>This popup will close automatically.</p>
-       </div>
-       `;
-        /*
-         * einde code van PGM-studenten
-         */
 
         // read files
         const readerXSLX = new FileReader();
@@ -251,6 +236,19 @@ export default () => {
             readerXSLX.readAsBinaryString(xlsxInput.files[0]);
             readerForces.readAsBinaryString(forcesInput.files[0]);
             readerCoords.readAsBinaryString(coordsInput.files[0]);
+
+            /*
+             * begin code van PGM-studenten
+             */
+            // change popup text when loading
+            uploadContainer.innerHTML = `
+            <div class="upload-container-content">
+            <h1>Loading...</h1><p>This popup will close automatically.</p>
+            </div>
+            `;
+            /*
+             * einde code van PGM-studenten
+             */
         } catch {
             alert(
                 "Er ging iets fout bij het inladen van de bestanden. Probeer het opnieuw."
@@ -259,9 +257,9 @@ export default () => {
             /*
              * begin code van PGM-studenten
              */
-            // reset & close popup
-            uploadContainer.innerHTML = uploadForm;
-            uploadContainer.classList.remove("visible");
+            // reload page
+            uploadContainer.classList.add("hidden");
+            window.location.reload();
             /*
              * einde code van PGM-studenten
              */
@@ -276,6 +274,11 @@ export default () => {
     /*
      * begin code van PGM-studenten
      */
+    // reload the page when starting a new simulation
+    newSimulation.addEventListener("click", () => {
+        window.location.reload();
+    });
+
     // get hawser containers
     const hawsersTimeline = document.getElementById("hawser-breakpoints");
     const addHawserTimelines = document.getElementById(
@@ -320,34 +323,13 @@ export default () => {
                 return hawserIDs.push(dataItem.id);
             }
         });
-        console.log(hawserIDs);
 
         // add HTML for breakevents on timeline
-        let hawsersHTML = "";
-        for (let i = 0; i < sortedHawserBreaksData.length; i++) {
-            // switch point position above or below the timeline
-            if (i % 2 === 0) {
-                hawsersHTML += `
-                <div class="hawserbreak-btn">
-                    <div style="left:${
-                        sortedHawserBreaksData[i].timePointInPercentage * 100
-                    }%" class="point top">
-                        <div class="line"></div>
-                    </div>
-                </div>
-                `;
-            } else {
-                hawsersHTML += `
-                <div class="hawserbreak-btn">
-                    <div style="left:${
-                        sortedHawserBreaksData[i].timePointInPercentage * 100
-                    }%" class="point bottom">
-                        <div class="line"></div>
-                    </div>
-                </div>
-                `;
-            }
-        }
+        const hawsersHTML = createBreakpointHTML(
+            sortedHawserBreaksData,
+            "hawser"
+        );
+
         // add points to timeline
         if (hawsersHTML !== "") {
             hawsersTimeline.innerHTML = hawsersHTML;
@@ -391,18 +373,13 @@ export default () => {
             "hawser",
             controls
         );
-        addBreakpointsToSubtimelines(
-            sortedHawserBreaksData,
-            "hawser",
-            controls
-        );
     };
 
     // add click event to open/close subtimelines
     let hawserButton = document.getElementById("open-hawsers");
     hawserButton.addEventListener("click", () => {
-        addHawserTimelines.classList.toggle("visible");
-        titleDivHawsers.classList.toggle("visible");
+        addHawserTimelines.classList.toggle("hidden");
+        titleDivHawsers.classList.toggle("hidden");
     });
 
     // get fender containers
@@ -451,31 +428,11 @@ export default () => {
         });
 
         // add HTML for breakevents on timeline
-        let fendersHTML = "";
-        for (let i = 0; i < sortedFenderBreaksData.length; i++) {
-            // switch point position above or below the timeline
-            if (i % 2 === 0) {
-                fendersHTML += `
-                <div class="fenderbreak-btn">
-                    <div style="left:${
-                        sortedFenderBreaksData[i].timePointInPercentage * 100
-                    }%" class="point top">
-                        <div class="line"></div>
-                    </div>
-                </div>
-                `;
-            } else {
-                fendersHTML += `
-                <div class="fenderbreak-btn">
-                    <div style="left:${
-                        sortedFenderBreaksData[i].timePointInPercentage * 100
-                    }%" class="point bottom">
-                        <div class="line"></div>
-                    </div>
-                </div>
-                `;
-            }
-        }
+        const fendersHTML = createBreakpointHTML(
+            sortedFenderBreaksData,
+            "fender"
+        );
+
         // add points to timeline
         if (fendersHTML !== "") {
             fendersTimeline.innerHTML = fendersHTML;
@@ -519,18 +476,13 @@ export default () => {
             "fender",
             controls
         );
-        addBreakpointsToSubtimelines(
-            sortedFenderBreaksData,
-            "fender",
-            controls
-        );
     };
 
     // add click event to open/close subtimelines
     let fenderButton = document.getElementById("open-fenders");
     fenderButton.addEventListener("click", () => {
-        addFenderTimelines.classList.toggle("visible");
-        titleDivFenders.classList.toggle("visible");
+        addFenderTimelines.classList.toggle("hidden");
+        titleDivFenders.classList.toggle("hidden");
     });
 
     const addTitles = (data, container) => {
@@ -545,49 +497,6 @@ export default () => {
         });
         // add titles to title container
         container.innerHTML += subtimelinesTitles;
-    };
-
-    const addBreakpointsToSubtimelines = (data, type, controls) => {
-        // get all timelines
-        let allTimelines = document.querySelectorAll(".timeline");
-        allTimelines = [...allTimelines];
-        let currentTimeline = null;
-        data.map((dataItem) => {
-            // find the timeline where the current breakevent belongs
-            currentTimeline = allTimelines.find((timeline) => {
-                return (
-                    timeline.dataset.type === type &&
-                    timeline.dataset.id === dataItem.id.toString()
-                );
-            });
-
-            // create HTML for breakevent
-            let breakpointHTML = `
-            <div class="${type}break-btn">
-                <div style="left:${
-                    dataItem.timePointInPercentage * 100
-                }%" class="point"></div>
-            </div>
-            `;
-
-            // add breakpoint to current subtimeline
-            currentTimeline.innerHTML += breakpointHTML;
-        });
-
-        // add click events to the breakevent points
-        const breakEventButtons = document.querySelectorAll(
-            `.${type}break-btn`
-        );
-        for (let i = 0; i < breakEventButtons.length; i++) {
-            breakEventButtons[i].addEventListener("click", () => {
-                // go to breakevent in animation
-                controls.setAnimationProgress(
-                    data[i < data.length ? i : i - data.length].timePointIndex
-                );
-                controls.setPause();
-                document.getElementById("simulation-canvas").scrollIntoView();
-            });
-        }
     };
 
     const addDangerZonesToSubtimelines = (data, type, controls) => {
@@ -605,27 +514,67 @@ export default () => {
             });
 
             // create HTML for dangerzone
-            let dangerzoneHTML = `
-            <div class="point-danger" data-timestamp="${
-                dataItem.timePointIndex
-            }" style="left:${dataItem.timePointInPercentage * 100}%"></div>
-            `;
+            let dangerzoneHTML = "";
+
+            // check which limit has been surpassed
+            if (dataItem.limit === 0.5) {
+                dangerzoneHTML = `
+              <div class="dangerzone yellow" data-timestamp="${
+                  dataItem.timePointIndex
+              }" style="left:${dataItem.timePointInPercentage * 100}%"></div>
+              `;
+            } else {
+                dangerzoneHTML = `
+              <div class="dangerzone red" data-timestamp="${
+                  dataItem.timePointIndex
+              }" style="left:${dataItem.timePointInPercentage * 100}%"></div>
+              `;
+            }
 
             // add dangerzone to current subtimeline
             currentTimeline.innerHTML += dangerzoneHTML;
         });
 
         // add click events to the dangerzone points
-        const dangerZoneButton = document.querySelectorAll(`.point-danger`);
+        const dangerZoneButton = document.querySelectorAll(`.dangerzone`);
         for (let i = 0; i < dangerZoneButton.length; i++) {
             dangerZoneButton[i].addEventListener("click", () => {
                 // go to dangerzone in animation
                 controls.setAnimationProgress(
-                    dangerZoneButton[i].dataset.timestamp
+                    parseInt(dangerZoneButton[i].dataset.timestamp)
                 );
                 controls.setPause();
                 document.getElementById("simulation-canvas").scrollIntoView();
             });
         }
+    };
+
+    const createBreakpointHTML = (data, type) => {
+        let breakpointHTML = "";
+        for (let i = 0; i < data.length; i++) {
+            // switch point position above or below the timeline
+            if (i % 2 === 0) {
+                breakpointHTML += `
+                <div class="${type}break-btn">
+                    <div style="left:${
+                        data[i].timePointInPercentage * 100
+                    }%" class="point top">
+                        <div class="line"></div>
+                    </div>
+                </div>
+                `;
+            } else {
+                breakpointHTML += `
+                <div class="${type}break-btn">
+                    <div style="left:${
+                        data[i].timePointInPercentage * 100
+                    }%" class="point bottom">
+                        <div class="line"></div>
+                    </div>
+                </div>
+                `;
+            }
+        }
+        return breakpointHTML;
     };
 };
