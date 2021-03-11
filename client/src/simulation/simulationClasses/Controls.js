@@ -112,13 +112,13 @@ export default class Controls {
         const playBtn = document.getElementById('play-btn');
         const pauseBtn = document.getElementById('pause-btn');
         playBtn.onclick = (e) => {
-            playBtn.style.display = 'block';
-            pauseBtn.style.display = 'none';
+            playBtn.style.display = 'none';
+            pauseBtn.style.display = 'block';
             this.switchPlayPause();
         }
         pauseBtn.onclick = (e) => {
-            playBtn.style.display = 'none';
-            pauseBtn.style.display = 'block';
+            playBtn.style.display = 'block';
+            pauseBtn.style.display = 'none';
             this.switchPlayPause();
         }
     }
