@@ -74,7 +74,7 @@
     "prettier:base": "prettier --parser typescript --single-quote",
     "prettier:check": "yarn prettier:base --list-different \"src/**/*.{ts,tsx}\"",
     "prettier:write": "yarn prettier:base --write \"src/**/*.{ts,tsx}\"",
-    "serve": "cross-env NODE_ENV=production NODE_SERVER_PORT=8082 node dist/index.js",
+    "serve": "cross-env NODE_ENV=production NODE_SERVER_PORT=8080 node dist/index.js",
     "watch:serve": "ts-node-dev ./src/index.ts --watch --poll --respawn --transpileOnly "
   },
   "husky": {

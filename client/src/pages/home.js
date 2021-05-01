@@ -3,6 +3,8 @@ import ApiService from '../lib/api/ApiService';
 import AuthService from '../lib/api/AuthService';
 import Router from '../lib/core/Router';
 import routes from '../routes';
+//import container from '../assets/images/ships/container/container_large_dirLeft.png';
+
 
 const homeTemplate = require('../templates/home.hbs');
 
@@ -20,7 +22,7 @@ export default () => {
     } else {
         console.log('logged in')
     };
-
+    
     // Logout
 
     const logoutBtn = document.getElementById('logout-btn-nav');

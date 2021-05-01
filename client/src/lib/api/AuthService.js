@@ -42,8 +42,6 @@ export default class AuthService {
           email,
           password
         };
-
-        console.log(body);
     
         const myHeaders = {
           'Accept': 'application/json',
@@ -80,7 +78,6 @@ export default class AuthService {
             role: role
         };
 
-        console.log(body);
 
         const options = {
             method: 'POST',
@@ -92,7 +89,6 @@ export default class AuthService {
         };
 
         const response = await fetch(url, options);
-        console.log(response);
         const user = await response.json();
         if (user) {
             App.router.navigate('/home');
