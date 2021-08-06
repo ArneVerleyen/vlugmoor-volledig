@@ -5,7 +5,13 @@ import Router from '../lib/core/Router';
 import routes from '../routes';
 //import container from '../assets/images/ships/container/container_large_dirLeft.png';
 
-
+const gasCarrierUrl = require('file-loader!../assets/images/ships/gascarrier/gascarrier_prismatanks_dirLeft.png');
+const containerUrl = require('file-loader!../assets/images/ships/container/container_large_dirLeft.png');
+const bulkCarrierUrl = require('file-loader!../assets/images/ships/bulkcarrier/bulkcarrier_dirLeft.png');
+const roroUrl = require('file-loader!../assets/images/ships/roro/roro_dirLeft.png');
+const oiltanker_largeUrl = require('file-loader!../assets/images/ships/tanker/oiltanker_small_dirLeft.png');
+const oiltanker_smallUrl = require('file-loader!../assets/images/ships/tanker/oiltanker_large_dirLeft.png');
+const listTemplate = require('../templates/list.hbs');
 const homeTemplate = require('../templates/home.hbs');
 
 export default () => {
@@ -37,17 +43,17 @@ export default () => {
 
     function getShipImage (imgName) {
         if (imgName === 'bulkcarrier') {
-            return '../assets/images/ships/bulkcarrier/bulkcarrier_dirLeft.png';
+            return bulkCarrierUrl.default;
         } else if (imgName === 'container') {
-            return '../assets/images/ships/container/container_large_dirLeft.png';
+            return containerUrl.default;
         } else if (imgName === 'gascarrier') {
-            return '../assets/images/ships/gascarrier/gascarrier_prismatanks_dirLeft.png';
+            return gasCarrierUrl.default;
         } else if (imgName === 'roro') {
-            return '../assets/images/ships/roro/roro_dirLeft.png';
-        } else if (imgName === 'oiltanker') {
-            return '../assets/images/ships/tanker/oiltanker_large_dirLeft.png';
+            return roroUrl.default;
+        } else if (imgName === 'oiltanker_large') {
+            return oiltanker_largeUrl.default;
         } else if (imgName === 'oiltanker_small') {
-            return '../assets/images/ships/tanker/oiltanker_small_dirLeft.png';
+            return oiltanker_smallUrl.default;
         }
     };
 
