@@ -2,4 +2,5 @@
 
 export const ROUTER_HASH = '#!';
 export const ROUTER_DEFAULT_PAGE = '';
-export const BASE_URL = 'http://ea15s003.ugent.be:8080';
+// export const BASE_URL = 'http://ea15s003.ugent.be:8000';
+export const BASE_URL = 'http://0.0.0.0:8000';
