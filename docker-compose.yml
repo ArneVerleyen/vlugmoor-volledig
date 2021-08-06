@@ -1,0 +1,21 @@
+version: '3.4'
+
+services: 
+    express:
+        build: ./server
+        ports: 
+            - 8000:8080
+        links:
+            - mongo
+    frontend:
+        build: ./client
+        ports: 
+            - 8080:80
+    mongo:
+        container_name: mongo
+        image: mongo
+        command: mongod --bind_ip_all
+        volumes:
+            - ./data:/data/db
+        ports:
+            - '27018:27017'
