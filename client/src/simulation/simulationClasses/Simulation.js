@@ -244,7 +244,7 @@ export default class Simulation {
             ? {} 
             : {
                 posX:  shipInfo.startXCoord,
-                posY: this.caseShip.width/2 + shipInfo.deltaYShips + shipInfo.width/2,
+                posY: (shipInfo.startYCoord !== undefined) ?shipInfo.startYCoord : this.caseShip.width/2 + shipInfo.deltaYShips + shipInfo.width/2,
                 direction: shipInfo.direction,
                 speedInMPerS: shipInfo.speedInMPerS,
             }

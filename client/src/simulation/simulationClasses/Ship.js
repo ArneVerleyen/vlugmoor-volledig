@@ -55,6 +55,7 @@ export default class Ship {
         
         this.displacementLimitToBeStaticInPx = 0.0001;
 
+        console.log('ship:', paramsIfIsPassingShip)
         // Indien dit schip een passerend schip is
         if (Object.keys(paramsIfIsPassingShip).length > 0) {
             this.posX = paramsIfIsPassingShip.posX;
