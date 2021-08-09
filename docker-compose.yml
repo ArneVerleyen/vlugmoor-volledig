@@ -17,5 +17,3 @@ services:
         command: mongod --bind_ip_all
         volumes:
             - ~/data:/data/db
-        ports:
-            - '27018:27017'
